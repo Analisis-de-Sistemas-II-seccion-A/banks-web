@@ -73,8 +73,7 @@ function Header({ theme }: any) {
           >
             <ul
               className="navbar-nav mx-auto text-uppercase"
-              style={{ display: "flex", listStyle: "none", padding: 0 }}
-              sx={{ backgroundColor: isDarkMode ? "#333333" : "" }}
+              style={{ display: "flex", listStyle: "none", padding: 0, backgroundColor: isDarkMode ? "#333333" : ""  }}
             >
               <li className="nav-item">
                 <Button onClick={() => handleRedirect("")} sx={buttonStyle}>Cuentas</Button>
