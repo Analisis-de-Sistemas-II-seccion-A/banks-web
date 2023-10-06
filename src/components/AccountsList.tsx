@@ -1,10 +1,12 @@
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Avatar, Button, Typography, useMediaQuery } from '@mui/material';
+import { Avatar, Button, IconButton, Typography, useMediaQuery } from '@mui/material';
 import dataService from '../services/Data.Service';
 import { Bank } from '../interfaces/Bank.interface';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import AddIcon from '@mui/icons-material/Add';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { green } from '@mui/material/colors';
 
 export default function AccountList({ theme }: any) {
     const navigate = useNavigate();
@@ -13,22 +15,31 @@ export default function AccountList({ theme }: any) {
     const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
     const handleRedirect = (route: string) => {
         navigate(`/banks-web/${route}`);
-      };
+    };
     const columns: GridColDef[] = [
-        { field: 'accountNumber', headerName: 'Numero de cuenta', width: 200 },
-        { field: 'accountType', headerName: 'Tipo de cuenta', width: 200 },
-        { field: 'accountUsage', headerName: 'Uso de la cuenta', width: 250 },
-        { field: 'accountHolder', headerName: 'Titular de la cuenta', width: 250 },
+        { field: 'accountNumber', headerName: 'Numero de cuenta', headerAlign: 'center', align: 'center', width: 200, headerClassName: isDarkMode ? 'dark-column-header' : 'column-header' },
+        { field: 'accountType', headerName: 'Tipo de cuenta', headerAlign: 'center', align: 'center', width: 250, headerClassName: isDarkMode ? 'dark-column-header' : 'column-header' },
+        { field: 'accountUsage', headerName: 'Uso de la cuenta', headerAlign: 'center', align: 'center', width: 278, headerClassName: isDarkMode ? 'dark-column-header' : 'column-header' },
+        { field: 'accountHolder', headerName: 'Titular de la cuenta', headerAlign: 'center', align: 'center', width: 200, headerClassName: isDarkMode ? 'dark-column-header' : 'column-header' },
         {
             field: 'details',
-            headerName: '',
+            headerName: 'Ver Detalle',
+            align: 'center',
+            headerAlign: 'center',
             width: 150,
+            headerClassName: isDarkMode ? 'dark-column-header' : 'column-header' ,
             renderCell: () => (
-                <a onClick={()=> handleRedirect("accounts/1/detail")}>Ver detalles</a>
+                <IconButton
+                    onClick={() => handleRedirect("accounts/1/detail")}
+                    size="small"
+                    style={{ color: green[500] }}
+                >
+                    <ArrowForwardIcon />
+                </IconButton>
             ),
-        },
+        }
     ];
-    
+
     const rows = [
         {
             id: 1,
@@ -70,20 +81,20 @@ export default function AccountList({ theme }: any) {
     useEffect(() => {
         setSelectedBank(dataService.selectedBank);
         const unsubscribe = dataService.subscribeToSelectedBank((newSelectedBank) => {
-          setSelectedBank(newSelectedBank);
+            setSelectedBank(newSelectedBank);
         });
-    
+
         return () => {
-          unsubscribe();
+            unsubscribe();
         };
-      }, []);
-      
-      if (!selectedBank) {
-        return <div style={{marginBottom:'25rem'}}>Seleccione un banco.</div>;
+    }, []);
+
+    if (!selectedBank) {
+        return <div style={{ marginBottom: '25rem' }}>Seleccione un banco.</div>;
     }
 
     return (
-        <div style={{ width: '80%', margin: '0 auto', padding: '20px' }}>
+        <div style={{ width: '80%', margin: '0 auto', padding: '20px', maxWidth: '70rem' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar alt="User Avatar" src={selectedBank.image} style={{ marginRight: '2rem' }} />
                 <Typography variant="h4" align={'left'} color="textPrimary" gutterBottom>
@@ -95,15 +106,18 @@ export default function AccountList({ theme }: any) {
                     variant="contained"
                     color="primary"
                     onClick={() => handleRedirect("accounts/create")}
+                    startIcon={<AddIcon />}
                 >
-                    Crear Cuenta
+                    Nueva Cuenta
                 </Button>
             </div>
             <div style={{ height: '100%', marginTop: '20px' }}>
                 <DataGrid
                     rows={rows}
                     columns={columns}
-                    sx={{ backgroundColor: isDarkMode ? '#1a1a1a' : '' }}
+                    sx={{
+                        backgroundColor: isDarkMode ? '#121212' : 'white'
+                    }}
                     initialState={{
                         pagination: {
                             paginationModel: { page: 0, pageSize: 5 },
@@ -111,6 +125,7 @@ export default function AccountList({ theme }: any) {
                     }}
                     pageSizeOptions={[5, 10]}
                 />
+
             </div>
         </div>
     );

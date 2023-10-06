@@ -17,10 +17,12 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import { styled } from '@mui/material/styles';
-import {  Button, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import {  Check } from '@mui/icons-material';
+import Tooltip from '@mui/material/Tooltip';
+import FormHelperText from '@mui/material/FormHelperText';
+import { Check } from '@mui/icons-material';
 
 const columns = ['fecha', 'importe', 'concepto', 'conciliar'];
 
@@ -28,8 +30,15 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
     const [conceptoOptions] = useState(['Opción 1', 'Opción 2', 'Opción 3']);
     const isSmallScreen = useMediaQuery('(max-width: 1200px)');
 
+    const columnWidths: any = {
+        fecha: '20%',
+        importe: '15%',
+        concepto: '20%',
+        conciliar: '20%',
+    };
+
     const handleAddRow = () => {
-        const newRow = { fecha: '', concepto: '', importe: '', conciliar: false };
+        const newRow = { fecha: '', concepto: '', importe: '', conciliar: false, isError: false };
         setRows([...rows, newRow]);
     };
 
@@ -46,13 +55,14 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
     };
 
     const StyledSelect = styled(Select)({
-        width: '70%',
+        width: '100%',
     });
 
     const StyledSmallTextField = styled(TextField)({
-        width: '100%', // Ajusta el ancho para que ocupe toda la celda
+        width: '100%',
     });
 
+   
     return (
         <Card variant="outlined" style={{ marginBottom: '20px', backgroundColor: isDarkMode ? '#1a1a1a' : '' }}>
             <CardContent>
@@ -60,11 +70,11 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                     {title}
                 </Typography>
                 <TableContainer>
-                    <Table>
+                    <Table style={{ tableLayout: 'fixed' }}>
                         <TableHead>
                             <TableRow>
                                 {columns.map((column) => (
-                                    <TableCell key={column}>
+                                    <TableCell key={column} style={{ width: columnWidths[column], textAlign: 'center' }}>
                                         {column === 'concepto' ? 'Concepto' : column.charAt(0).toUpperCase() + column.slice(1)}
                                     </TableCell>
                                 ))}
@@ -74,46 +84,55 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                             {rows.map((row: any, rowIndex: any) => (
                                 <TableRow key={rowIndex}>
                                     {columns.map((column) => (
-                                        <TableCell key={column}>
+                                        <TableCell key={column} style={{ textAlign: 'center' }}>
                                             {isSmallScreen ? (
                                                 <div>
                                                     {column === 'fecha' ? (
-                                                        <StyledSmallTextField
-                                                            variant="outlined"
-                                                            fullWidth
-                                                            type="date"
-                                                            label="Fecha"
-                                                            InputLabelProps={{
-                                                                shrink: true,
-                                                            }}
-                                                            value={row[column]}
-                                                            onChange={(e: any) => handleInputChange(e, rowIndex, column)}
-                                                        />
+                                                        <Tooltip title="Ingrese la fecha" arrow>
+                                                            <StyledSmallTextField
+                                                                variant="outlined"
+                                                                fullWidth
+                                                                type="date"
+                                                                label="Fecha"
+                                                                InputLabelProps={{
+                                                                    shrink: true,
+                                                                }}
+                                                                value={row[column]}
+                                                                onChange={(e: any) => handleInputChange(e, rowIndex, column)}
+                                                                error={row.isError}
+                                                            />
+                                                        </Tooltip>
                                                     ) : column === 'importe' ? (
-                                                        <StyledSmallTextField
-                                                            variant="outlined"
-                                                            fullWidth
-                                                            type="number"
-                                                            label="Importe"
-                                                            InputLabelProps={{
-                                                                shrink: true,
-                                                            }}
-                                                            value={row[column]}
-                                                            onChange={(e: any) => handleInputChange(e, rowIndex, column)}
-                                                        />
+                                                        <Tooltip title="Ingrese el importe" arrow>
+                                                            <StyledSmallTextField
+                                                                variant="outlined"
+                                                                fullWidth
+                                                                type="number"
+                                                                label="Importe"
+                                                                InputLabelProps={{
+                                                                    shrink: true,
+                                                                }}
+                                                                value={row[column]}
+                                                                onChange={(e: any) => handleInputChange(e, rowIndex, column)}
+                                                                error={row.isError}
+                                                            />
+                                                        </Tooltip>
                                                     ) : column === 'concepto' ? (
-                                                        <StyledSelect
-                                                            variant="outlined"
-                                                            fullWidth
-                                                            value={row[column]}
-                                                            onChange={(e: any) => handleInputChange(e, rowIndex, column)}
-                                                        >
-                                                            {conceptoOptions.map((option) => (
-                                                                <MenuItem key={option} value={option}>
-                                                                    {option}
-                                                                </MenuItem>
-                                                            ))}
-                                                        </StyledSelect>
+                                                        <Tooltip title="Seleccione el concepto" arrow>
+                                                            <StyledSelect
+                                                                variant="outlined"
+                                                                fullWidth
+                                                                value={row[column]}
+                                                                onChange={(e: any) => handleInputChange(e, rowIndex, column)}
+                                                                error={row.isError}
+                                                            >
+                                                                {conceptoOptions.map((option) => (
+                                                                    <MenuItem key={option} value={option}>
+                                                                        {option}
+                                                                    </MenuItem>
+                                                                ))}
+                                                            </StyledSelect>
+                                                        </Tooltip>
                                                     ) : column === 'conciliar' ? (
                                                         <Checkbox
                                                             checked={row[column]}
@@ -122,46 +141,58 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                                                     ) : (
                                                         ''
                                                     )}
+                                                    {row.isError && (
+                                                        <FormHelperText error>Obligatorio</FormHelperText>
+                                                    )}
                                                 </div>
                                             ) : (
                                                 <div>
                                                     {column === 'fecha' ? (
-                                                        <StyledSmallTextField
-                                                            variant="outlined"
-                                                            fullWidth
-                                                            type="date"
-                                                            label="Fecha"
-                                                            InputLabelProps={{
-                                                                shrink: true,
-                                                            }}
-                                                            value={row[column]}
-                                                            onChange={(e: any) => handleInputChange(e, rowIndex, column)}
-                                                        />
+                                                        <Tooltip title="Ingrese la fecha" arrow>
+                                                            <StyledSmallTextField
+                                                                variant="outlined"
+                                                                fullWidth
+                                                                type="date"
+                                                                label="Fecha"
+                                                                InputLabelProps={{
+                                                                    shrink: true,
+                                                                }}
+                                                                value={row[column]}
+                                                                onChange={(e: any) => handleInputChange(e, rowIndex, column)}
+                                                                error={row.isError}
+                                                            />
+                                                        </Tooltip>
                                                     ) : column === 'importe' ? (
-                                                        <StyledSmallTextField
-                                                            variant="outlined"
-                                                            fullWidth
-                                                            type="number"
-                                                            label="Importe"
-                                                            InputLabelProps={{
-                                                                shrink: true,
-                                                            }}
-                                                            value={row[column]}
-                                                            onChange={(e: any) => handleInputChange(e, rowIndex, column)}
-                                                        />
+                                                        <Tooltip title="Ingrese el importe" arrow>
+                                                            <StyledSmallTextField
+                                                                variant="outlined"
+                                                                fullWidth
+                                                                type="number"
+                                                                label="Importe"
+                                                                InputLabelProps={{
+                                                                    shrink: true,
+                                                                }}
+                                                                value={row[column]}
+                                                                onChange={(e: any) => handleInputChange(e, rowIndex, column)}
+                                                                error={row.isError}
+                                                            />
+                                                        </Tooltip>
                                                     ) : column === 'concepto' ? (
-                                                        <StyledSelect
-                                                            variant="outlined"
-                                                            fullWidth
-                                                            value={row[column]}
-                                                            onChange={(e: any) => handleInputChange(e, rowIndex, column)}
-                                                        >
-                                                            {conceptoOptions.map((option) => (
-                                                                <MenuItem key={option} value={option}>
-                                                                    {option}
-                                                                </MenuItem>
-                                                            ))}
-                                                        </StyledSelect>
+                                                        <Tooltip title="Seleccione el concepto" arrow>
+                                                            <StyledSelect
+                                                                variant="outlined"
+                                                                fullWidth
+                                                                value={row[column]}
+                                                                onChange={(e: any) => handleInputChange(e, rowIndex, column)}
+                                                                error={row.isError}
+                                                            >
+                                                                {conceptoOptions.map((option) => (
+                                                                    <MenuItem key={option} value={option}>
+                                                                        {option}
+                                                                    </MenuItem>
+                                                                ))}
+                                                            </StyledSelect>
+                                                        </Tooltip>
                                                     ) : column === 'conciliar' ? (
                                                         <Checkbox
                                                             checked={row[column]}
@@ -169,6 +200,9 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                                                         />
                                                     ) : (
                                                         ''
+                                                    )}
+                                                    {row.isError && (
+                                                        <FormHelperText error>Obligatorio</FormHelperText>
                                                     )}
                                                 </div>
                                             )}
@@ -194,9 +228,27 @@ const ReconciliationDetail = ({ theme }: any) => {
     const [table4Rows, setTable4Rows] = useState([]);
     const isDarkMode: boolean = theme.palette.mode === 'dark';
     const isLargeScreen = useMediaQuery('(min-width: 1200px)');
-    const bankAmount = 1000; // Reemplaza esto con tu valor real
-    const bookValues = 500; // Reemplaza esto con tu valor real
+    const bankAmount = 1000; 
+    const bookValues = 500; 
 
+    const validateFields = () => {
+        // Validar si los campos están llenos
+        let isValid = true;
+        table1Rows.forEach((row: any) => {
+            if (
+                isFieldEmpty(row.fecha) ||
+                isFieldEmpty(row.concepto) ||
+                isFieldEmpty(row.importe)
+            ) {
+                isValid = false;
+            }
+        });
+        return isValid;
+    };
+
+    const isFieldEmpty = (value: string) => {
+        return value.trim() === '';
+    };
     return (
         <Container>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'start' }}>
@@ -230,7 +282,7 @@ const ReconciliationDetail = ({ theme }: any) => {
                                     }}
                                 />
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={3}>
                                 <FormControl variant="outlined" fullWidth>
                                     <InputLabel id="cuenta-label">Selecciona la cuenta</InputLabel>
                                     <Select
@@ -303,11 +355,10 @@ const ReconciliationDetail = ({ theme }: any) => {
             <CustomTable title="(-) Abonos de la Empresa no correspondidos por el Banco" rows={table4Rows} setRows={setTable4Rows} isDarkMode={isDarkMode} />
             <Card variant="outlined" style={{ marginBottom: '20px', backgroundColor: isDarkMode ? '#1a1a1a' : '' }}>
                 <CardContent>
-                    <div>
                     <Grid container spacing={2} sx={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'end', marginBottom: '1rem' }}>
                         <Grid item xs={3}>
                             <Typography variant="body1" gutterBottom>
-                            Saldos según libros:
+                                Saldos según libros:
                             </Typography>
                         </Grid>
                         <Grid item xs={3}>
@@ -316,11 +367,10 @@ const ReconciliationDetail = ({ theme }: any) => {
                             </Typography>
                         </Grid>
                     </Grid>
-                       
-                        <div>
-                            <Button variant="contained"
-                                startIcon={<Check />}>Realizar Conciliación</Button>
-                        </div>
+                    <div>
+                        <Button variant="contained" startIcon={<Check />} onClick={validateFields}>
+                            Realizar Conciliación
+                        </Button>
                     </div>
                 </CardContent>
             </Card>
