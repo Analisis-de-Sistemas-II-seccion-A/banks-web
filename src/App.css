@@ -41,14 +41,6 @@
  background-color: #eeeeee; 
 }
 
-.custom-header {
-  background-color: #eeeeee;
-  font-size: medium;
-  color: #3e5cb2;
-  font-weight: 900;
-}
-
-
 .read-the-docs {
   color: #888;
 }
@@ -65,14 +57,14 @@
 
 .footer {
   background-color: #3e5cb2;
-  color: white; /* Puedes ajustar el color del texto según tus preferencias */
-  padding: 20px 0; /* Ajusta el relleno según sea necesario */
+  color: white; 
+  padding: 20px 0; 
 }
 
 @media (max-width: 768px) {
   .column-flex {
     flex-direction: column;
-    text-align: center; /* Opcional, para centrar el contenido en pantallas pequeñas */
+    text-align: center; 
   }
 }
 
@@ -82,4 +74,17 @@
 }
 
 
+.column-header {
+  background-color: #eeeeee; 
+  color: #3e5cb2;
+  font-size: medium;
+  font-weight: 900;
+}
+
+.dark-column-header {
+  background-color: #333333; 
+  color: white;
+  font-size: medium;
+  font-weight: 900;
+}
 
