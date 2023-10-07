@@ -15,10 +15,9 @@ import bi from '../assets/bi.jpg';
 import banrural from '../assets/banrural.png';
 import bam from '../assets/bam.jpg';
 import profile from '../assets/profile.png';
-import TransitEnterexitIcon from '@mui/icons-material/TransitEnterexit';
-import LogoutIcon from '@mui/icons-material/Logout';
 import dataService from '../services/Data.Service';
 import { Bank } from '../interfaces/Bank.interface';
+import { Logout, TransitEnterexit } from '@mui/icons-material';
 
 const drawerWidth = 240;
 
@@ -158,14 +157,14 @@ export default function AccountsDrawer() {
               <span style={{ color: 'white' }}>{user.email}</span>
               <MenuItem onClick={toggleProfileMenu}>
                 <ListItemIcon>
-                  <TransitEnterexitIcon sx={{ color: 'white' }} />
+                  <TransitEnterexit sx={{ color: 'white' }} />
                 </ListItemIcon>
                 <Button sx={{ color: 'white' }}>Salir al portal</Button>
               </MenuItem>
 
               <MenuItem onClick={toggleProfileMenu}>
                 <ListItemIcon>
-                  <LogoutIcon sx={{ color: 'white' }} />
+                  <Logout sx={{ color: 'white' }} />
                 </ListItemIcon>
                 <Button sx={{ color: 'white' }}>Cerrar sesión</Button>
               </MenuItem>

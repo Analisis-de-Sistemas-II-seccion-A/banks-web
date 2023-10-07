@@ -1,6 +1,5 @@
+import { Logout, TransitEnterexit } from "@mui/icons-material";
 import { Drawer, IconButton, MenuItem, ListItemIcon, Button } from "@mui/material";
-import LogoutIcon from '@mui/icons-material/Logout';
-import TransitEnterexitIcon from '@mui/icons-material/TransitEnterexit';
 import { useNavigate } from "react-router-dom";
 
 function ProfileDrawer({
@@ -55,14 +54,14 @@ function ProfileDrawer({
                 <div style={{ flex: 1 }}></div>
                 <MenuItem onClick={toggleProfileMenu}>
                     <ListItemIcon>
-                        <TransitEnterexitIcon />
+                        <TransitEnterexit />
                     </ListItemIcon>
                     <Button sx={buttonStyle}>Salir al portal</Button>
                 </MenuItem>
 
                 <MenuItem onClick={toggleProfileMenu}>
                     <ListItemIcon>
-                        <LogoutIcon />
+                        <Logout />
                     </ListItemIcon>
                     <Button sx={buttonStyle}>Cerrar sesión</Button>
                 </MenuItem>

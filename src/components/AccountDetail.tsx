@@ -10,9 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import SearchIcon from '@mui/icons-material/Search';
-import WalletIcon from '@mui/icons-material/Wallet';
-
+import { Search, Wallet } from "@mui/icons-material";
 
 const styles = {
   button: {
@@ -211,7 +209,7 @@ const AccountDetail = ({ theme }: any) => {
               <div style={{ display: 'grid', justifyContent: 'center' }}>
                 <MenuItem>
                   <ListItemIcon>
-                    <WalletIcon />
+                    <Wallet />
                   </ListItemIcon>
                   <Button style={{ color: 'gray' }} onClick={() => handleRedirect("")}>Ir al listado de cuentas</Button>
                 </MenuItem>
@@ -245,7 +243,7 @@ const AccountDetail = ({ theme }: any) => {
                 style={{ marginRight: isLargeScreen ? '16px' : '', marginBottom: isLargeScreen ? '' : '20px' }}
               />
               <IconButton aria-label="Buscar">
-                <SearchIcon />
+                <Search />
               </IconButton>
             </div>
           </CardContent>

@@ -1,6 +1,6 @@
+import { Save } from '@mui/icons-material';
 import { Container, Typography, Card, Grid, TextField, TextareaAutosize, MenuItem, InputAdornment, Button } from '@mui/material';
 import { useState } from 'react';
-import SaveIcon from '@mui/icons-material/Save';
 import { useParams } from 'react-router-dom';
 
 const ExecuteTransaction = () => {
@@ -440,7 +440,7 @@ const ExecuteTransaction = () => {
                                     <Button
                                         variant="contained"
                                         color="primary"
-                                        startIcon={<SaveIcon />}
+                                        startIcon={<Save />}
                                     >
                                         Guardar
                                     </Button>

@@ -4,10 +4,8 @@ import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
 import { Box, Divider, Hidden } from '@mui/material';
 import IsotipoWhite from '../assets/Imagotipo B.png';
-import PhoneIcon from '@mui/icons-material/Phone';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import EmailIcon from '@mui/icons-material/Email';
-import TransitEnterexitIcon from '@mui/icons-material/TransitEnterexit';
+import { LocationOn, Phone, TransitEnterexit } from '@mui/icons-material';
 
 function Footer() {
     return (
@@ -29,7 +27,7 @@ function Footer() {
                     <Box mb={1}></Box>
                     <div className="links-column">
                         <IconButton href="#" color="inherit">
-                            <TransitEnterexitIcon />
+                            <TransitEnterexit />
                         </IconButton>
                         <Link style={{ color: 'white' }} href="#">Ir al portal de aplicaciones empresariales</Link>
                     </div>
@@ -37,11 +35,11 @@ function Footer() {
                         <Typography variant="h6">Contacto</Typography>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="column-flex">
                             <IconButton href="#" color="inherit">
-                                <LocationOnIcon />
+                                <LocationOn />
                             </IconButton>
                             <Typography variant="h6">Ciudad de Guatemala, Guatemala</Typography>
                             <IconButton href="#" color="inherit">
-                                <PhoneIcon />
+                                <Phone />
                             </IconButton>
                             <Typography variant="h6">+502 1777-0000</Typography>
                             <IconButton href="#" color="inherit">
