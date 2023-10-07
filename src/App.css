@@ -37,8 +37,68 @@
   padding: 2em;
 }
 
+.transaction-card{
+  background-color: #f0f0f0;
+}
+
+.textfield{
+  background-color: #ffffff;
+  color:#000000;
+  font-weight: 400;
+}
+
 .card-header {
  background-color: #eeeeee; 
+}
+
+.column-header {
+  background-color: #eeeeee;
+  font-size: medium;
+  color: #3e5cb2;
+  font-weight: 900;
+}
+.dark-column-header {
+  background-color: #333333;
+  font-size: medium;
+  color: white;
+  font-weight: 900;
+}
+
+.dark-mode-cell {
+  background-color: #333333;
+  color: white; 
+}
+
+.textarea::placeholder {
+  color: #a3a3a3;
+}
+/* xs */
+@media (max-width: 575.98px) {
+  .textarea {
+    width: 100%;
+    font-size: 12px;
+  }
+}
+
+/* sm */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .textarea {
+    width: 50%;
+  }
+}
+
+/* md */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .textarea {
+    width: 50%;
+  }
+}
+
+/*lg*/
+@media (min-width: 992px) {
+  .textarea {
+    width: 50%;
+  }
 }
 
 .read-the-docs {
