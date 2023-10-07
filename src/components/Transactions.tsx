@@ -13,20 +13,45 @@ import { useEffect, useState } from "react";
 import { Bank } from "../interfaces/Bank.interface";
 import dataService from "../services/Data.Service";
 import { DataGrid } from "@mui/x-data-grid";
+//import { TablePagination } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+
 
 const Transactions = ({ theme }: any) => {
   const navigate = useNavigate();
   const handleRedirect = (route: string) => {
     navigate(`/banks-web/${route}`);
   };
-  
+
+  const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
+  const isDarkMode: boolean = theme.palette.mode === "dark";
+  const isLargeScreen = useMediaQuery("(min-width: 1200px)");
 
   const columns = [
-    { field: "fecha", headerName: "Fecha",  headerClassName: 'custom-header ', width: 200 },
-    { field: "monto", headerName: "Monto",  headerClassName: 'custom-header', width: 200 },
-    { field: "tipo", headerName: "Tipo",  headerClassName: 'custom-header',  width: 200 },
-    { field: "descripcion", headerName: "Descripción",  headerClassName: 'custom-header', width: 300 },
+    {
+      field: "fecha",
+      headerName: "Fecha",
+      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
+      width: 200,
+    },
+    {
+      field: "monto",
+      headerName: "Monto",
+      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
+      width: 200,
+    },
+    {
+      field: "tipo",
+      headerName: "Tipo",
+      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
+      width: 200,
+    },
+    {
+      field: "descripcion",
+      headerName: "Descripción",
+      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
+      width: 258,
+    },
   ];
 
   const rows = [
@@ -66,10 +91,6 @@ const Transactions = ({ theme }: any) => {
       descripcion: "Depósito de clientes",
     },
   ];
-
-  const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
-  const isDarkMode: boolean = theme.palette.mode === "dark";
-  const isLargeScreen = useMediaQuery("(min-width: 1200px)");
 
   useEffect(() => {
     setSelectedBank(dataService.selectedBank);
@@ -167,20 +188,37 @@ const Transactions = ({ theme }: any) => {
             </CardContent>
           </Card>
         </Grid>
+        <Grid item xs={isLargeScreen ? 9 : 12} sx={{ marginTop: "2rem" }}>
+          <Typography
+            variant="h6"
+            align={"left"}
+            color="textPrimary"
+            sx={{ marginBottom: "1rem" }}
+          >
+            Ultimas transacciones
+          </Typography>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            sx={{ color: isDarkMode ? "#959595" : "black" }}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 5 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+            pagination
+            /* components={{
+              Pagination: (props) => (
+                <TablePagination
+                  labelRowsPerPage="Número de filas"
+                  rowsPerPageOptions={[5, 10]}
+                />
+              ),
+            }}*/
+          />
+        </Grid>
       </Grid>
-      <div style={{ height: 370, width: "79%"}}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 5 },
-            },
-          }}
-          pageSizeOptions={[5, 10]}
-        />
-      </div>
     </Container>
   );
 };
