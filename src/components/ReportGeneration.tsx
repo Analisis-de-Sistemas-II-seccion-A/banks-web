@@ -9,9 +9,15 @@ import {
   CssBaseline,
   useMediaQuery,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DownloadIcon from "@mui/icons-material/Download";
 import Avatar from "@mui/material/Avatar";
+import estadoCuenta from '../assets/estadoCuenta.png';
+import transferencia from '../assets/transferencia.png';
+import ingresos from '../assets/ingresos.png';
+import egresos from '../assets/egresos.png';
+import conciliacion from '../assets/conciliacion.png';
+
 
 function ReportGeneration({ theme }: any) {
   const isLargeScreen = useMediaQuery("(min-width: 1200px)");
@@ -58,7 +64,7 @@ function ReportGeneration({ theme }: any) {
                 </Typography>
                 <Avatar
                   alt="Estado de Cuenta"
-                  src="src\assets\estadoCuenta.png"
+                  src={estadoCuenta}
                   sx={{ height: "70px", width: "70px" }}
                   variant="square"
                   style={{ margin: "1vw" }}
@@ -97,7 +103,7 @@ function ReportGeneration({ theme }: any) {
                 </Typography>
                 <Avatar
                   alt="Transferencia"
-                  src="src\assets\transferencia.png"
+                  src={transferencia}
                   sx={{ height: "70px", width: "70px" }}
                   variant="square"
                   style={{ margin: "1vw" }}
@@ -138,7 +144,7 @@ function ReportGeneration({ theme }: any) {
                 </Typography>
                 <Avatar
                   alt="Transferencia"
-                  src="src\assets\ingresos.png"
+                  src={ingresos}
                   sx={{ height: "70px", width: "70px" }}
                   variant="square"
                   style={{ margin: "1vw" }}
@@ -179,7 +185,7 @@ function ReportGeneration({ theme }: any) {
                 </Typography>
                 <Avatar
                   alt="Transferencia"
-                  src="src\assets\egresos.png"
+                  src={egresos}
                   sx={{ height: "70px", width: "70px" }}
                   variant="square"
                   style={{ margin: "1vw" }}
@@ -220,7 +226,7 @@ function ReportGeneration({ theme }: any) {
                 </Typography>
                 <Avatar
                   alt="Transferencia"
-                  src="src\assets\transferencia.png"
+                  src={conciliacion}
                   sx={{ height: "70px", width: "70px" }}
                   variant="square"
                   style={{ margin: "1vw" }}

@@ -8,9 +8,9 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import SummarizeIcon from '@mui/icons-material/Summarize';
 import TextField from '@mui/material/TextField';
 import { Container, useMediaQuery, RadioGroup, Radio, FormControlLabel, Button } from '@mui/material';
+import { Summarize } from '@mui/icons-material';
 
 function ReportsDetail() {
     const isLargeScreen = useMediaQuery('(min-width: 600px)');
@@ -117,7 +117,7 @@ function ReportsDetail() {
                         </FormControl>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '2rem' }}>
-                        <Button variant="contained" color="primary" startIcon={<SummarizeIcon/>}>
+                        <Button variant="contained" color="primary" startIcon={<Summarize/>}>
                             Generar Reporte
                         </Button>
                     </div>
