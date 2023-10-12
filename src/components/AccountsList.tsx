@@ -14,7 +14,7 @@ export default function AccountList({ theme }: any) {
     const isDarkMode: boolean = theme.palette.mode === "dark";
     const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
     const handleRedirect = (route: string) => {
-        navigate(`/banks-web/${route}`);
+        navigate(`/${route}`);
     };
     const columns: GridColDef[] = [
         { field: 'accountNumber', headerName: 'Numero de cuenta', headerAlign: 'center', align: 'center', width: 200, headerClassName: isDarkMode ? 'dark-column-header' : 'column-header' },

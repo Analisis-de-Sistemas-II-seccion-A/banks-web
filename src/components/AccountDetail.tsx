@@ -114,7 +114,7 @@ const AccountDetail = ({ theme }: any) => {
   ];
 
   const handleRedirect = (route: string) => {
-    navigate(`/banks-web/${route}`);
+    navigate(`/${route}`);
   };
 
   const selectedAccount = accounts.find((acc) => acc.id === Number(account));

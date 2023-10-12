@@ -19,8 +19,6 @@ import CreateOrUpdateAccount from "./components/CreateOrUpdateAccount";
 import Transfer from "./components/Transfer";
 import ExecuteTransaction from "./components/ExecuteTransaction";
 
-const PATH: string = "banks-web";
-
 function App() {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const isLargeScreen = useMediaQuery("(min-width: 1200px)");
@@ -78,44 +76,44 @@ function App() {
           <div className={isLargeScreen ? "content-container" : ""}>
             <Routes>
               <Route
-                path={`${PATH}/`}
+                path={`/`}
                 element={<AccountsList theme={theme} />}
               />
               <Route
-                path={`${PATH}/reports`}
+                path={`/reports`}
                 element={<ReportGeneration theme={theme} />}
               />
               <Route
-                path={`${PATH}/statistics`}
+                path={`/statistics`}
                 element={<Statistics theme={theme} />}
               />
               <Route
-                path={`${PATH}/accounts/:account/detail`}
+                path={`/accounts/:account/detail`}
                 element={<AccountDetail theme={theme} />}
               />
               <Route
-                path={`${PATH}/transactions`}
+                path={`/transactions`}
                 element={<Transactions theme={theme} />}
               />
               <Route
-                path={`${PATH}/reports/detail`}
+                path={`/reports/detail`}
                 element={<ReportsDetail />}
               />
               <Route
-                path={`${PATH}/reconciliation`}
+                path={`/reconciliation`}
                 element={<BankReconciliation theme={theme} />}
               />
               <Route
-                path={`${PATH}/reconciliation/detail`}
+                path={`/reconciliation/detail`}
                 element={<ReconciliationDetail theme={theme} />}
               />
               <Route
-                path={`${PATH}/accounts/:type`}
+                path={`/accounts/:type`}
                 element={<CreateOrUpdateAccount theme={theme} />}
               />
-              <Route path={`${PATH}/transfer`} element={<Transfer />} />
+              <Route path={`/transfer`} element={<Transfer />} />
               <Route
-                path={`${PATH}/transaction/:type`}
+                path={`/transaction/:type`}
                 element={<ExecuteTransaction />}
               />
             </Routes>

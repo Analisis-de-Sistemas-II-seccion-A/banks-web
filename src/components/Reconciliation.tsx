@@ -51,7 +51,7 @@ function BankReconciliation({ theme }: any) {
 
     const handleRedirect = (route: string) => {
         if (isValid) {
-            navigate(`/banks-web/${route}`);
+            navigate(`/${route}`);
         }
     };
 

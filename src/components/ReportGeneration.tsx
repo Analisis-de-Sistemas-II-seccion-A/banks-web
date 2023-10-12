@@ -24,7 +24,7 @@ function ReportGeneration({ theme }: any) {
   const isDarkMode: boolean = theme.palette.mode === "dark";
   const navigate = useNavigate();
   const handleRedirect = (route: string) => {
-    navigate(`/banks-web/${route}`);
+    navigate(`/${route}`);
   };
 
   return (

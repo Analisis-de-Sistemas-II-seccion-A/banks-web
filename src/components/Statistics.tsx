@@ -91,7 +91,7 @@ function Statistics({ theme }: any) {
   });
 
   const handleRedirect = (route: string) => {
-    navigate(`/banks-web/${route}`);
+    navigate(`/${route}`);
   };
 
   const handleBankChange = (event: any) => {

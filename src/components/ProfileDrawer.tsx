@@ -13,7 +13,7 @@ function ProfileDrawer({
 }: any) {
     const navigate = useNavigate();
     const handleRedirect = (route: string) => {
-        navigate(`/banks-web/${route}`);
+        navigate(`/${route}`);
       };
     return (
         <Drawer

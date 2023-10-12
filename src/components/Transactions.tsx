@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 const Transactions = ({ theme }: any) => {
   const navigate = useNavigate();
   const handleRedirect = (route: string) => {
-    navigate(`/banks-web/${route}`);
+    navigate(`/${route}`);
   };
 
   const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
