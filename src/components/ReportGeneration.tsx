@@ -9,7 +9,7 @@ import {
   CssBaseline,
   useMediaQuery,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import DownloadIcon from "@mui/icons-material/Download";
 import Avatar from "@mui/material/Avatar";
 

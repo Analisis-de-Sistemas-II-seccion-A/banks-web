@@ -87,7 +87,7 @@ function Statistics({ theme }: any) {
     '&.MuiGrid-item': {
       margin: '16px',
     },
-    backgroundColor: isDarkMode ? '#1a1a1a' : '#ebebeb'
+    backgroundColor: isDarkMode ? '#1a1a1a' : '#F7F7F7'
   });
 
   const handleRedirect = (route: string) => {
@@ -105,7 +105,7 @@ function Statistics({ theme }: any) {
   return (
     <Container maxWidth="lg">
           <Title variant="h4">Estadísticas</Title>
-      <Card sx={{backgroundColor: isDarkMode ? '#1a1a1a' : '#ebebeb', marginBottom: '2rem', marginTop: '2rem'}}>
+      <Card sx={{backgroundColor: isDarkMode ? '#1a1a1a' : '#F7F7F7', marginBottom: '2rem', marginTop: '2rem'}}>
         <CardContent>
           <ButtonsContainer style={{ marginTop: '2rem' }}>
             <Button
@@ -253,24 +253,24 @@ function Statistics({ theme }: any) {
       </GridContainer>
       <div style={{ display: isLargeScreen ? 'flex' : 'grid', alignItems: 'center', justifyContent: 'center', marginTop: '2rem', marginBottom: '2rem' }}>
         <LineChart
-          sx={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#ebebeb' }}
+          sx={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#F7F7F7' }}
           xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
           series={[
             {
-              data: [2, 5.5, 2, 8.5, 1.5, 5],
+              data: [20000, 15000, 24000, 40000, 10000, 5000],
             },
           ]}
           width={isLargeScreen ? 500 : 400}
           height={400}
         />
         <PieChart
-          sx={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#ebebeb' }}
+          sx={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#F7F7F7' }}
           series={[
             {
               data: [
-                { id: 0, value: 10, label: 'series A' },
-                { id: 1, value: 15, label: 'series B' },
-                { id: 2, value: 20, label: 'series C' },
+                { id: 0, value: 20, label: 'Ingresos' },
+                { id: 1, value: 10, label: 'Egresos' },
+                { id: 2, value: 5, label: 'Reserva' },
               ],
             },
           ]}
@@ -280,23 +280,24 @@ function Statistics({ theme }: any) {
       </div>
       <div style={{ display: isLargeScreen ? 'flex' : 'grid', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem', marginTop: 'wrem' }}>
         <BarChart
-          sx={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#ebebeb' }}
-          yAxis={[{ scaleType: 'band', data: ['group A', 'group B', 'group C'] }]}
-          series={[{ data: [4, 3, 5] }]}
+          sx={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#F7F7F7' }}
+          title='Gastos por Categoría'
+          yAxis={[{ scaleType: 'band', data: ['Gasolina', 'Comida', 'Utilería'] }]}
+          series={[{ data: [5000, 10000, 4000] }]}
           layout='horizontal'
           width={isLargeScreen ? 500 : 400}
           height={400}
         />
         <LineChart
-          sx={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#ebebeb' }}
+          sx={{ backgroundColor: isDarkMode ? '#1a1a1a' : '#F7F7F7' }}
           xAxis={[{ data: sample }]}
           yAxis={[
             { id: 'linearAxis', scaleType: 'linear' },
             { id: 'logAxis', scaleType: 'log' },
           ]}
           series={[
-            { yAxisKey: 'linearAxis', data: sample, label: 'linear' },
-            { yAxisKey: 'logAxis', data: sample, label: 'log' },
+            { yAxisKey: 'linearAxis', data: sample, label: 'Ingresos' },
+            { yAxisKey: 'logAxis', data: sample, label: 'Egresos' },
           ]}
           leftAxis="linearAxis"
           rightAxis="logAxis"
