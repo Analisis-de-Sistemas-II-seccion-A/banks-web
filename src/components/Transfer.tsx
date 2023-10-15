@@ -14,7 +14,8 @@ import {
 } from "@mui/material";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 
-const Transfer = () => {
+const Transfer = ({ theme }: any) => {
+  const isDarkMode: boolean = theme.palette.mode === "dark";
   return (
     <Container maxWidth="md">
       <Typography
@@ -28,7 +29,7 @@ const Transfer = () => {
       </Typography>
 
       <Grid item xs={12}>
-        <Card sx={{ backgroundColor: "#f0f0f0" }}>
+        <Card sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}>
           <div style={{ margin: "20px" }}>
             <form>
               <Grid container spacing={1} justifyContent="center">
@@ -44,6 +45,10 @@ const Transfer = () => {
                       Seleccione el número de cuenta...
                     </InputLabel>
                     <Select
+                      style={{
+                        backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                        borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                      }}
                       labelId="cuenta-select-label"
                       id="cuenta-select"
                       label="Seleccione el número de cuenta..."
@@ -56,7 +61,11 @@ const Transfer = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} style={{ marginTop: "13px", marginBottom: "1rem" }}>
+                <Grid
+                  item
+                  xs={12}
+                  style={{ marginTop: "13px", marginBottom: "1rem" }}
+                >
                   <Typography variant="subtitle1" textAlign={"start"}>
                     <strong>Número de la cuenta destino</strong>
                   </Typography>
@@ -69,6 +78,10 @@ const Transfer = () => {
                       Seleccione el número de cuenta...
                     </InputLabel>
                     <Select
+                      style={{
+                        backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                        borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                      }}
                       labelId="cuenta-select-label"
                       id="cuenta-select"
                       label="Seleccione el número de cuenta..."
@@ -81,7 +94,14 @@ const Transfer = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={5} sm={3.5} md={2.8} lg={2.8} style={{ marginRight: "2rem"}}>
+                <Grid
+                  item
+                  xs={5}
+                  sm={3.5}
+                  md={2.8}
+                  lg={2.8}
+                  style={{ marginRight: "2rem" }}
+                >
                   <Typography variant="subtitle1" textAlign={"start"}>
                     <strong>Fecha</strong>
                   </Typography>
@@ -92,6 +112,10 @@ const Transfer = () => {
                     type="date"
                     name="Fecha"
                     variant="outlined"
+                    style={{
+                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                    }}
                   />
                 </Grid>
                 <Grid item xs={4} sm={2.8} md={2.3} lg={2.3}>
@@ -99,6 +123,10 @@ const Transfer = () => {
                     <strong>Monto</strong>
                   </Typography>
                   <TextField
+                    style={{
+                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                    }}
                     className="textfield"
                     size="small"
                     fullWidth
@@ -115,7 +143,7 @@ const Transfer = () => {
                 </Grid>
               </Grid>
               <Grid textAlign={"center"} style={{ marginTop: "2rem" }}>
-                <Typography variant="subtitle1" >
+                <Typography variant="subtitle1">
                   <strong>Descripción</strong>
                 </Typography>
                 <TextareaAutosize

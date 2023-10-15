@@ -16,7 +16,8 @@ import { useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { useParams } from "react-router-dom";
 
-const ExecuteTransaction = () => {
+const ExecuteTransaction = ({ theme }: any) => {
+  const isDarkMode: boolean = theme.palette.mode === "dark";
   const { type } = useParams();
   const [tipoDocumento, setTipoDocumento] = useState("");
   const [mostrarCard2, setMostrarCard2] = useState(false);
@@ -70,7 +71,7 @@ const ExecuteTransaction = () => {
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12}>
-          <Card sx={{ backgroundColor: "#f0f0f0" }}>
+          <Card sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}>
             <div style={{ margin: "20px" }}>
               <form>
                 <div style={{ marginBottom: "1rem" }}>
@@ -90,6 +91,10 @@ const ExecuteTransaction = () => {
                       label="Seleccione el número de cuenta..."
                       size="small"
                       className="textfield"
+                      style={{
+                        backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                        borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                      }}
                     >
                       <MenuItem value={1}>Cuenta 1</MenuItem>
                       <MenuItem value={2}>Cuenta 2</MenuItem>
@@ -117,6 +122,10 @@ const ExecuteTransaction = () => {
                         variant="outlined"
                         value={tipoDocumento}
                         onChange={handleTipoDocumentoChange}
+                        style={{
+                          backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                          borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                        }}
                       >
                         <MenuItem value="undefined">
                           Seleccionar tipo de documento...
@@ -139,6 +148,10 @@ const ExecuteTransaction = () => {
                         type="text"
                         variant="outlined"
                         placeholder="Ingresar número de documento"
+                        style={{
+                          backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                          borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                        }}
                       />
                     </Grid>
                   </Grid>
@@ -161,6 +174,10 @@ const ExecuteTransaction = () => {
                         type="text"
                         variant="outlined"
                         placeholder="Ingresar el estado del documento"
+                        style={{
+                          backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                          borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                        }}
                       />
                     </Grid>
                     <Grid item xs={12} sm={4} md={4} lg={3.4}>
@@ -180,6 +197,10 @@ const ExecuteTransaction = () => {
                           label="Seleccione el número de origen..."
                           size="small"
                           className="textfield"
+                          style={{
+                            backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                            borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                          }}
                         >
                           <MenuItem value={1}>Ventas</MenuItem>
                           <MenuItem value={2}>Compras</MenuItem>
@@ -196,7 +217,7 @@ const ExecuteTransaction = () => {
           {mostrarCard2 && (
             <Card
               style={{ marginTop: "16px" }}
-              sx={{ backgroundColor: "#f0f0f0" }}
+              sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}
             >
               <div style={{ margin: "20px" }}>
                 <form>
@@ -218,6 +239,10 @@ const ExecuteTransaction = () => {
                           type="text"
                           variant="outlined"
                           placeholder="Ingresar el nombre del cliente"
+                          style={{
+                            backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                            borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                          }}
                         />
                       </Grid>
                       <Grid item xs={6.5} sm={4} md={3} lg={2.5}>
@@ -231,6 +256,10 @@ const ExecuteTransaction = () => {
                           type="text"
                           variant="outlined"
                           placeholder="Ingresar NIT del cliente"
+                          style={{
+                            backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                            borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                          }}
                         />
                       </Grid>
                     </Grid>
@@ -253,6 +282,10 @@ const ExecuteTransaction = () => {
                           type="text"
                           variant="outlined"
                           placeholder="Ingresar el número de la factura"
+                          style={{
+                            backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                            borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                          }}
                         />
                       </Grid>
                       <Grid item xs={5} sm={2.8} md={2.8} lg={2.2}>
@@ -266,6 +299,10 @@ const ExecuteTransaction = () => {
                           type="date"
                           name="Fecha"
                           variant="outlined"
+                          style={{
+                            backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                            borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                          }}
                         />
                       </Grid>
                     </Grid>
@@ -304,7 +341,7 @@ const ExecuteTransaction = () => {
           {mostrarCard3 && (
             <Card
               style={{ marginTop: "16px" }}
-              sx={{ backgroundColor: "#f0f0f0" }}
+              sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}
             >
               <div
                 style={{
@@ -378,6 +415,12 @@ const ExecuteTransaction = () => {
                             id="mtnefectivo"
                             variant="outlined"
                             placeholder="100.00"
+                            style={{
+                              backgroundColor: isDarkMode
+                                ? "#3b3b3b"
+                                : "#ffffff",
+                              borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                            }}
                             InputProps={{
                               startAdornment: (
                                 <InputAdornment position="start">
@@ -399,6 +442,12 @@ const ExecuteTransaction = () => {
                             id="mntChequePropio"
                             variant="outlined"
                             placeholder="100.00"
+                            style={{
+                              backgroundColor: isDarkMode
+                                ? "#3b3b3b"
+                                : "#ffffff",
+                              borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                            }}
                             InputProps={{
                               startAdornment: (
                                 <InputAdornment position="start">
@@ -420,6 +469,12 @@ const ExecuteTransaction = () => {
                             id="mntChequeAjeno"
                             variant="outlined"
                             placeholder="100.00"
+                            style={{
+                              backgroundColor: isDarkMode
+                                ? "#3b3b3b"
+                                : "#ffffff",
+                              borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                            }}
                             InputProps={{
                               startAdornment: (
                                 <InputAdornment position="start">
@@ -440,6 +495,10 @@ const ExecuteTransaction = () => {
                           id="mntChequeExtranjero"
                           variant="outlined"
                           placeholder="100.00"
+                          style={{
+                            backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                            borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                          }}
                           InputProps={{
                             startAdornment: (
                               <InputAdornment position="start">
@@ -460,7 +519,7 @@ const ExecuteTransaction = () => {
           {mostrarCard4 && (
             <Card
               style={{ marginTop: "16px" }}
-              sx={{ backgroundColor: "#f0f0f0" }}
+              sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}
             >
               <div
                 style={{
@@ -470,36 +529,44 @@ const ExecuteTransaction = () => {
                 }}
               >
                 <form>
-                      <Grid container spacing={3}>
-                        <Grid item xs={12} sm={5} md={4} lg={3.5}>
-                          <label htmlFor="nombreBeneficiario">
-                            <strong>Nombre del beneficiario del cheque</strong>
-                          </label>
-                          <TextField
-                            className="textfield"
-                            size="small"
-                            fullWidth
-                            type="text"
-                            variant="outlined"
-                            placeholder="Ingresar el nombre del beneficiario "
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6.5} md={5.5} lg={5}>
-                          <label htmlFor="referenciaFactura">
-                            <strong>
-                              Referencia o número de factura (opcional)
-                            </strong>
-                          </label>
-                          <TextField
-                            className="textfield"
-                            size="small"
-                            fullWidth
-                            type="text"
-                            variant="outlined"
-                            placeholder="Ingresar referencia o número de factura"
-                          />
-                        </Grid>
-                      </Grid>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} sm={5} md={4} lg={3.5}>
+                      <label htmlFor="nombreBeneficiario">
+                        <strong>Nombre del beneficiario del cheque</strong>
+                      </label>
+                      <TextField
+                        className="textfield"
+                        size="small"
+                        fullWidth
+                        type="text"
+                        variant="outlined"
+                        placeholder="Ingresar el nombre del beneficiario "
+                        style={{
+                          backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                          borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6.5} md={5.5} lg={5}>
+                      <label htmlFor="referenciaFactura">
+                        <strong>
+                          Referencia o número de factura (opcional)
+                        </strong>
+                      </label>
+                      <TextField
+                        className="textfield"
+                        size="small"
+                        fullWidth
+                        type="text"
+                        variant="outlined"
+                        placeholder="Ingresar referencia o número de factura"
+                        style={{
+                          backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                          borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
                 </form>
               </div>
             </Card>
@@ -508,7 +575,7 @@ const ExecuteTransaction = () => {
           {mostrarCard5 && (
             <Card
               style={{ marginTop: "16px" }}
-              sx={{ backgroundColor: "#f0f0f0" }}
+              sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}
             >
               <div style={{ margin: "20px" }}>
                 <form>
@@ -530,6 +597,10 @@ const ExecuteTransaction = () => {
                           type="text"
                           variant="outlined"
                           placeholder="Ingresar el nombre del cliente"
+                          style={{
+                            backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                            borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                          }}
                         />
                       </Grid>
                       <Grid item xs={6.5} sm={4} md={3} lg={2.5}>
@@ -543,6 +614,10 @@ const ExecuteTransaction = () => {
                           type="text"
                           variant="outlined"
                           placeholder="Ingresar NIT del cliente"
+                          style={{
+                            backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                            borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                          }}
                         />
                       </Grid>
                     </Grid>
@@ -565,6 +640,10 @@ const ExecuteTransaction = () => {
                           type="text"
                           variant="outlined"
                           placeholder="Ingresar el número de la factura"
+                          style={{
+                            backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                            borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                          }}
                         />
                       </Grid>
                       <Grid item xs={5} sm={2.8} md={2.8} lg={2.2}>
@@ -578,6 +657,10 @@ const ExecuteTransaction = () => {
                           type="date"
                           name="Fecha"
                           variant="outlined"
+                          style={{
+                            backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                            borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                          }}
                         />
                       </Grid>
                     </Grid>
@@ -642,7 +725,7 @@ const ExecuteTransaction = () => {
 
           <Card
             style={{ marginTop: "16px" }}
-            sx={{ backgroundColor: "#f0f0f0" }}
+            sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}
           >
             <div
               style={{
@@ -664,6 +747,10 @@ const ExecuteTransaction = () => {
                       type="date"
                       name="Fecha"
                       variant="outlined"
+                      style={{
+                        backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                        borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                      }}
                     />
                   </Grid>
                   <Grid item xs={4} sm={2.3} md={2} lg={1.7}>
@@ -678,6 +765,10 @@ const ExecuteTransaction = () => {
                       id="mtnefectivo"
                       variant="outlined"
                       placeholder="100.00"
+                      style={{
+                        backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                        borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                      }}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">Q</InputAdornment>

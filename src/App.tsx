@@ -99,7 +99,7 @@ function App() {
               />
               <Route
                 path={`${PATH}/reports/detail`}
-                element={<ReportsDetail />}
+                element={<ReportsDetail theme={theme} />}
               />
               <Route
                 path={`${PATH}/reconciliation`}
@@ -113,10 +113,13 @@ function App() {
                 path={`${PATH}/accounts/:type`}
                 element={<CreateOrUpdateAccount theme={theme} />}
               />
-              <Route path={`${PATH}/transfer`} element={<Transfer />} />
+              <Route
+                path={`${PATH}/transfer`}
+                element={<Transfer theme={theme} />}
+              />
               <Route
                 path={`${PATH}/transaction/:type`}
-                element={<ExecuteTransaction />}
+                element={<ExecuteTransaction theme={theme}  />}
               />
             </Routes>
           </div>
