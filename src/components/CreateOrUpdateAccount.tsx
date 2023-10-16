@@ -1,52 +1,64 @@
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import Container from '@mui/material/Container';
-import { MenuItem, Select, useMediaQuery, Tooltip } from '@mui/material';
-import Button from '@mui/material/Button';
-import CreateIcon from '@mui/icons-material/Create';
-import AddIcon from '@mui/icons-material/Add';
-
-import bam from '../assets/bam.jpg';
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import TextField from "@mui/material/TextField";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import Container from "@mui/material/Container";
+import { MenuItem, Select, useMediaQuery, Tooltip } from "@mui/material";
+import Button from "@mui/material/Button";
+import UpdateIcon from "@mui/icons-material/Update";
+import SaveIcon from "@mui/icons-material/Save";
+import bam from "../assets/bam.jpg";
 
 const CreateOrUpdateAccount = ({ theme }: any) => {
   const { type } = useParams();
-  const isLargeScreen = useMediaQuery('(min-width: 1200px)');
+  const isLargeScreen = useMediaQuery("(min-width: 1200px)");
   const isDarkMode: boolean = theme.palette.mode === "dark";
 
-  const initialAccountInfo = type === 'update' ? {
-    accountNumber: '123456789',
-    accountName: 'Cuenta Monetaria BAM',
-    accountType: 'Monetaria',
-    currency: 'Quetzales',
-    image: bam,
-    representative: 'Juan Pérez',
-    phoneNumber: '12345678',
-    email: 'ejuarezh5@miumg.edu.gt'
-  } : {
-    accountNumber: '',
-    accountName: '',
-    accountType: '',
-    currency: '',
-    image: '',
-    representative: '',
-    phoneNumber: '',
-    email: ''
-  };
+  const initialAccountInfo =
+    type === "update"
+      ? {
+          accountNumber: "123456789",
+          accountName: "Cuenta Monetaria BAM",
+          accountType: "Monetaria",
+          currency: "Quetzales",
+          image: bam,
+          representative: "Juan Pérez",
+          phoneNumber: "12345678",
+          email: "ejuarezh5@miumg.edu.gt",
+        }
+      : {
+          accountNumber: "",
+          accountName: "",
+          accountType: "",
+          currency: "",
+          image: "",
+          representative: "",
+          phoneNumber: "",
+          email: "",
+        };
 
-  const [accountNumber, setAccountNumber] = useState(initialAccountInfo?.accountNumber || '');
-  const [accountName, setAccountName] = useState(initialAccountInfo?.accountName || '');
-  const [accountType, setAccountType] = useState(initialAccountInfo?.accountType || '');
-  const [currency, setCurrency] = useState(initialAccountInfo?.currency || '');
-  const [representative, setRepresentative] = useState(initialAccountInfo?.representative || '');
-  const [phoneNumber, setPhoneNumber] = useState(initialAccountInfo?.phoneNumber || '');
-  const [email, setEmail] = useState(initialAccountInfo?.email || '');
+  const [accountNumber, setAccountNumber] = useState(
+    initialAccountInfo?.accountNumber || ""
+  );
+  const [accountName, setAccountName] = useState(
+    initialAccountInfo?.accountName || ""
+  );
+  const [accountType, setAccountType] = useState(
+    initialAccountInfo?.accountType || ""
+  );
+  const [currency, setCurrency] = useState(initialAccountInfo?.currency || "");
+  const [representative, setRepresentative] = useState(
+    initialAccountInfo?.representative || ""
+  );
+  const [phoneNumber, setPhoneNumber] = useState(
+    initialAccountInfo?.phoneNumber || ""
+  );
+  const [email, setEmail] = useState(initialAccountInfo?.email || "");
 
   const [accountNumberError, setAccountNumberError] = useState(false);
   const [accountNameError, setAccountNameError] = useState(false);
@@ -114,46 +126,87 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
   };
 
   return (
-    <Container maxWidth="lg" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh' }}>
-      <Card variant="outlined" style={{ marginBottom: '16px', backgroundColor: isDarkMode ? '#1a1a1a' : '', width: isLargeScreen ? '50%' : '100%' }}>
+    <Container
+      maxWidth="lg"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        minHeight: "100vh",
+      }}
+    >
+      <Card
+        variant="outlined"
+        style={{
+          marginBottom: "16px",
+          backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+          width: isLargeScreen ? "50%" : "100%",
+        }}
+      >
         <CardContent>
-          <Typography variant="h6" color="textPrimary" textAlign="start" gutterBottom>
+          <Typography
+            variant="h6"
+            color="textPrimary"
+            textAlign="start"
+            gutterBottom
+          >
             Información de la Cuenta
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
-              <Tooltip title="Ingrese el número de cuenta" placement="top-start">
+              <Tooltip
+                title="Ingrese el número de cuenta"
+                placement="top-start"
+              >
                 <TextField
                   fullWidth
+                  size="small"
                   label="No. de Cuenta"
                   variant="outlined"
-                  type='number'
+                  type="number"
                   value={accountNumber}
                   onChange={(e) => setAccountNumber(e.target.value)}
                   error={accountNumberError}
+                  style={{
+                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                  }}
                 />
               </Tooltip>
             </Grid>
             <Grid item xs={12} md={8}>
-              <Tooltip title="Ingrese el nombre que le asignará a su cuenta" placement="top-start">
+              <Tooltip
+                title="Ingrese el nombre que le asignará a su cuenta"
+                placement="top-start"
+              >
                 <TextField
                   fullWidth
+                  size="small"
                   label="Nombre de Cuenta"
                   variant="outlined"
                   value={accountName}
                   onChange={(e) => setAccountName(e.target.value)}
                   error={accountNameError}
+                  style={{
+                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                  }}
                 />
               </Tooltip>
             </Grid>
             <Grid item xs={12} md={8}>
-              <FormControl fullWidth variant="outlined">
+              <FormControl fullWidth size="small" variant="outlined">
                 <InputLabel>Tipo de Cuenta</InputLabel>
                 <Select
+                  size="small"
                   value={accountType}
                   onChange={(e) => setAccountType(e.target.value)}
                   label="Tipo de Cuenta"
                   error={accountTypeError}
+                  style={{
+                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                  }}
                 >
                   <MenuItem value="Monetaria">Monetaria</MenuItem>
                   <MenuItem value="Ahorro">Ahorro</MenuItem>
@@ -162,13 +215,18 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={4}>
-              <FormControl fullWidth variant="outlined">
+              <FormControl fullWidth size="small" variant="outlined">
                 <InputLabel>Moneda</InputLabel>
                 <Select
+                  size="small"
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
                   label="Moneda"
                   error={currencyError}
+                  style={{
+                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                  }}
                 >
                   <MenuItem value="Quetzales">Quetzales</MenuItem>
                   <MenuItem value="Dólares">Dólares</MenuItem>
@@ -178,63 +236,106 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
           </Grid>
         </CardContent>
       </Card>
-      <Card variant="outlined" sx={{ backgroundColor: isDarkMode ? '#1a1a1a' : '', width: isLargeScreen ? '50%' : '100%' }}>
+      <Card
+        variant="outlined"
+        sx={{
+          backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+          width: isLargeScreen ? "50%" : "100%",
+        }}
+      >
         <CardContent>
-          <Typography variant="h6" color="textPrimary" textAlign="start" gutterBottom>
+          <Typography
+            variant="h6"
+            color="textPrimary"
+            textAlign="start"
+            gutterBottom
+          >
             Información del Titular
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Tooltip title="Ingrese el nombre del titular" placement="top-start">
+              <Tooltip
+                title="Ingrese el nombre del titular"
+                placement="top-start"
+              >
                 <TextField
                   fullWidth
+                  size="small"
                   label="Nombre"
                   variant="outlined"
                   value={representative}
                   onChange={(e) => setRepresentative(e.target.value)}
                   error={representativeError}
+                  style={{
+                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                  }}
                 />
               </Tooltip>
             </Grid>
             <Grid item xs={12} md={4}>
-              <Tooltip title="Ingrese el número de teléfono del titular" placement="top-start">
+              <Tooltip
+                title="Ingrese el número de teléfono del titular"
+                placement="top-start"
+              >
                 <TextField
                   fullWidth
+                  size="small"
                   label="Teléfono"
                   variant="outlined"
                   type="number"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   error={phoneNumberError}
+                  style={{
+                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                  }}
                 />
               </Tooltip>
             </Grid>
             <Grid item xs={12} md={8}>
-              <Tooltip title="Ingrese la dirección de correo electrónico del titular" placement="top-start">
+              <Tooltip
+                title="Ingrese la dirección de correo electrónico del titular"
+                placement="top-start"
+              >
                 <TextField
                   fullWidth
+                  size="small"
                   label="Correo"
                   variant="outlined"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   error={emailError}
+                  style={{
+                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                  }}
                 />
               </Tooltip>
             </Grid>
           </Grid>
         </CardContent>
-      </Card>
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px', marginBottom: '2rem' }}>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={type === 'update' ? <CreateIcon /> : <AddIcon />}
-          onClick={handleSubmit}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "16px",
+            marginBottom: "2rem",
+          }}
         >
-          {type === 'update' ? 'Actualizar' : 'Guardar'}
-        </Button>
-      </div>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            startIcon={type === "update" ? <UpdateIcon /> : <SaveIcon />}
+            onClick={handleSubmit}
+          >
+            {type === "update" ? "Actualizar" : "Guardar"}
+          </Button>
+        </div>
+      </Card>
     </Container>
   );
 };

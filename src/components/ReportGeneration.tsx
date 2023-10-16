@@ -9,15 +9,19 @@ import {
   CssBaseline,
   useMediaQuery,
 } from "@mui/material";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DownloadIcon from "@mui/icons-material/Download";
 import Avatar from "@mui/material/Avatar";
-import estadoCuenta from '../assets/estadoCuenta.png';
-import transferencia from '../assets/transferencia.png';
-import ingresos from '../assets/ingresos.png';
-import egresos from '../assets/egresos.png';
-import conciliacion from '../assets/conciliacion.png';
-
+import estadoCuenta from "../assets/estadoCuenta.png";
+import estadoCuentaDark from "../assets/estadoCuenta B.png";
+import transferencia from "../assets/transferencia.png";
+import transferenciaDark from "../assets/transferencia B.png";
+import ingresos from "../assets/ingresos.png";
+import ingresosDark from "../assets/ingresos B.png";
+import egresos from "../assets/egresos.png";
+import egresosDark from "../assets/egresos B.png";
+import conciliacion from "../assets/conciliacion.png";
+import conciliacionDark from "../assets/conciliacion B.png";
 
 function ReportGeneration({ theme }: any) {
   const isLargeScreen = useMediaQuery("(min-width: 1200px)");
@@ -45,7 +49,7 @@ function ReportGeneration({ theme }: any) {
         <Grid item xs={12} sm={6} md={3}>
           <Card
             variant="outlined"
-            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#ebebeb" }}
+            sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}
           >
             <CardContent>
               <Grid
@@ -64,14 +68,15 @@ function ReportGeneration({ theme }: any) {
                 </Typography>
                 <Avatar
                   alt="Estado de Cuenta"
-                  src={estadoCuenta}
-                  sx={{ height: "70px", width: "70px" }}
+                  src={isDarkMode ? estadoCuentaDark : estadoCuenta}
+                  sx={{ height: "80px", width: "80px" }}
                   variant="square"
                   style={{ margin: "1vw" }}
                 />
                 <Button
                   variant="contained"
                   fullWidth
+                  size="large"
                   startIcon={<DownloadIcon />}
                   onClick={() => handleRedirect("reports/detail")}
                 >
@@ -84,7 +89,7 @@ function ReportGeneration({ theme }: any) {
         <Grid item xs={12} sm={6} md={3}>
           <Card
             variant="outlined"
-            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#ebebeb" }}
+            sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}
           >
             <CardContent>
               <Grid
@@ -103,14 +108,15 @@ function ReportGeneration({ theme }: any) {
                 </Typography>
                 <Avatar
                   alt="Transferencia"
-                  src={transferencia}
-                  sx={{ height: "70px", width: "70px" }}
+                  src={isDarkMode ? transferenciaDark : transferencia}
+                  sx={{ height: "80px", width: "80px" }}
                   variant="square"
                   style={{ margin: "1vw" }}
                 />
                 <Button
                   variant="contained"
                   fullWidth
+                  size="large"
                   startIcon={<DownloadIcon />}
                   onClick={() => handleRedirect("reports/detail")}
                 >
@@ -125,7 +131,7 @@ function ReportGeneration({ theme }: any) {
         <Grid item xs={12} sm={6} md={3}>
           <Card
             variant="outlined"
-            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#ebebeb" }}
+            sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}
           >
             <CardContent>
               <Grid
@@ -144,14 +150,15 @@ function ReportGeneration({ theme }: any) {
                 </Typography>
                 <Avatar
                   alt="Transferencia"
-                  src={ingresos}
-                  sx={{ height: "70px", width: "70px" }}
+                  src={isDarkMode ? ingresosDark : ingresos}
+                  sx={{ height: "80px", width: "80px" }}
                   variant="square"
                   style={{ margin: "1vw" }}
                 />
                 <Button
                   variant="contained"
                   fullWidth
+                  size="large"
                   startIcon={<DownloadIcon />}
                   onClick={() => handleRedirect("reports/detail")}
                 >
@@ -166,7 +173,7 @@ function ReportGeneration({ theme }: any) {
         <Grid item xs={12} sm={6} md={3}>
           <Card
             variant="outlined"
-            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#ebebeb" }}
+            sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}
           >
             <CardContent>
               <Grid
@@ -185,14 +192,15 @@ function ReportGeneration({ theme }: any) {
                 </Typography>
                 <Avatar
                   alt="Transferencia"
-                  src={egresos}
-                  sx={{ height: "70px", width: "70px" }}
+                  src={isDarkMode ? egresosDark : egresos}
+                  sx={{ height: "80px", width: "80px" }}
                   variant="square"
                   style={{ margin: "1vw" }}
                 />
                 <Button
                   variant="contained"
                   fullWidth
+                  size="large"
                   startIcon={<DownloadIcon />}
                   onClick={() => handleRedirect("reports/detail")}
                 >
@@ -207,7 +215,7 @@ function ReportGeneration({ theme }: any) {
         <Grid item xs={12} sm={6} md={3}>
           <Card
             variant="outlined"
-            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#ebebeb" }}
+            sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}
           >
             <CardContent>
               <Grid
@@ -226,14 +234,15 @@ function ReportGeneration({ theme }: any) {
                 </Typography>
                 <Avatar
                   alt="Transferencia"
-                  src={conciliacion}
-                  sx={{ height: "70px", width: "70px" }}
+                  src={isDarkMode ? conciliacionDark : conciliacion}
+                  sx={{ height: "80px", width: "80px" }}
                   variant="square"
                   style={{ margin: "1vw" }}
                 />
                 <Button
                   variant="contained"
                   fullWidth
+                  size="large"
                   startIcon={<DownloadIcon />}
                   onClick={() => handleRedirect("reports/detail")}
                 >
