@@ -1,11 +1,12 @@
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
 import { Box, Divider, Hidden } from '@mui/material';
 import IsotipoWhite from '../assets/Imagotipo B.png';
 import EmailIcon from '@mui/icons-material/Email';
 import { LocationOn, Phone, TransitEnterexit } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
+import { environment } from '../environments/environment';
 
 function Footer() {
     return (
@@ -29,7 +30,7 @@ function Footer() {
                         <IconButton href="#" color="inherit">
                             <TransitEnterexit />
                         </IconButton>
-                        <Link style={{ color: 'white' }} href="#">Ir al portal de aplicaciones empresariales</Link>
+                        <Link style={{ color: 'white' }} to={environment.erpUri}>Ir al portal de aplicaciones empresariales</Link>
                     </div>
                     <div>
                         <Typography variant="h6">Contacto</Typography>

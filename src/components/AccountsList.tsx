@@ -1,6 +1,6 @@
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Avatar, Button, IconButton, Typography, useMediaQuery } from '@mui/material';
-import dataService from '../services/Data.Service';
+import dataService, { subscribeToSelectedBank } from '../services/Bank.service';
 import { Bank } from '../interfaces/Bank.interface';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -80,7 +80,7 @@ export default function AccountList({ theme }: any) {
 
     useEffect(() => {
         setSelectedBank(dataService.selectedBank);
-        const unsubscribe = dataService.subscribeToSelectedBank((newSelectedBank) => {
+        const unsubscribe = subscribeToSelectedBank((newSelectedBank) => {
             setSelectedBank(newSelectedBank);
         });
 

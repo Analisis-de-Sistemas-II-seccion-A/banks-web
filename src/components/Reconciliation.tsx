@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import dataService from "../services/Data.Service";
+import dataService, { subscribeToSelectedBank } from "../services/Bank.service";
 import { Bank } from "../interfaces/Bank.interface";
 import { useNavigate } from "react-router-dom";
 import { ArrowForwardIosOutlined } from "@mui/icons-material";
@@ -180,7 +180,7 @@ function BankReconciliation({ theme }: any) {
 
   useEffect(() => {
     setSelectedBank(dataService.selectedBank);
-    const unsubscribe = dataService.subscribeToSelectedBank(
+    const unsubscribe = subscribeToSelectedBank(
       (newSelectedBank) => {
         setSelectedBank(newSelectedBank);
       }

@@ -15,9 +15,12 @@ import bi from '../assets/bi.jpg';
 import banrural from '../assets/banrural.png';
 import bam from '../assets/bam.jpg';
 import profile from '../assets/profile.png';
-import dataService from '../services/Data.Service';
+import dataService from '../services/Bank.service';
 import { Bank } from '../interfaces/Bank.interface';
 import { Logout, TransitEnterexit } from '@mui/icons-material';
+import { environment } from '../environments/environment';
+import { Link } from 'react-router-dom';
+import AuthService from '../services/Auth.service';
 
 const drawerWidth = 240;
 
@@ -96,8 +99,12 @@ export default function AccountsDrawer() {
 
   const banks: Bank[] = [{ id: 1, image: bi, name: 'Banco Industrial' }, { id: 2, image: banrural, name: 'Banrural' }, { id: 3, image: bam, name: 'Banco Agromercantil' }];
 
-  if(banks.length > 0) {
+  if (banks.length > 0) {
     dataService.selectBank(banks[0]);
+  }
+
+  const handleLogout = () => {
+    AuthService.logout();
   }
 
   return (
@@ -159,21 +166,20 @@ export default function AccountsDrawer() {
                 <ListItemIcon>
                   <TransitEnterexit sx={{ color: 'white' }} />
                 </ListItemIcon>
-                <Button sx={{ color: 'white' }}>Salir al portal</Button>
+                <Link to={environment.erpUri} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <Button sx={{ color: 'white' }}>Salir al portal</Button>
+                </Link>
               </MenuItem>
-
               <MenuItem onClick={toggleProfileMenu}>
                 <ListItemIcon>
                   <Logout sx={{ color: 'white' }} />
                 </ListItemIcon>
-                <Button sx={{ color: 'white' }}>Cerrar sesión</Button>
+                <Button onClick={handleLogout} sx={{ color: 'white' }}>Cerrar sesión</Button>
               </MenuItem>
             </div>
 
           )}
-
         </div>
-
       </Drawer>
       <Content style={{ marginLeft: open ? drawerWidth : 0 }}>
         {/* Contenido */}

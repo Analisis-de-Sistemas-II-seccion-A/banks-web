@@ -4,7 +4,7 @@ import bi from '../assets/bi.jpg';
 import banrural from '../assets/banrural.png';
 import bam from '../assets/bam.jpg';
 import { Bank } from '../interfaces/Bank.interface';
-import dataService from '../services/Data.Service';
+import dataService from '../services/Bank.service';
 
 function AccountNavigation() {
   const [value, setValue] = React.useState(0);

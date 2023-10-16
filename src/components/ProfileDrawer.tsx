@@ -1,6 +1,8 @@
 import { Logout, TransitEnterexit } from "@mui/icons-material";
 import { Drawer, IconButton, MenuItem, ListItemIcon, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { environment } from "../environments/environment";
+import AuthService from "../services/Auth.service";
 
 function ProfileDrawer({
     profileMenuOpen,
@@ -14,7 +16,10 @@ function ProfileDrawer({
     const navigate = useNavigate();
     const handleRedirect = (route: string) => {
         navigate(`/${route}`);
-      };
+    };
+    const handleLogout = () => {
+        AuthService.logout();
+      }
     return (
         <Drawer
             anchor="left"
@@ -48,7 +53,7 @@ function ProfileDrawer({
                         <ListItemIcon>
                             {item.icon}
                         </ListItemIcon>
-                        <Button  onClick={()=>handleRedirect(item.route)} sx={item.buttonStyle}>{item.label}</Button>
+                        <Button onClick={() => handleRedirect(item.route)} sx={item.buttonStyle}>{item.label}</Button>
                     </MenuItem>
                 ))}
                 <div style={{ flex: 1 }}></div>
@@ -56,14 +61,16 @@ function ProfileDrawer({
                     <ListItemIcon>
                         <TransitEnterexit />
                     </ListItemIcon>
-                    <Button sx={buttonStyle}>Salir al portal</Button>
+                    <Link to={environment.erpUri} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Button sx={buttonStyle}>Salir al portal</Button>
+                    </Link>
                 </MenuItem>
 
                 <MenuItem onClick={toggleProfileMenu}>
                     <ListItemIcon>
                         <Logout />
                     </ListItemIcon>
-                    <Button sx={buttonStyle}>Cerrar sesión</Button>
+                    <Button onClick={handleLogout} sx={buttonStyle}>Cerrar sesión</Button>
                 </MenuItem>
             </div>
         </Drawer>

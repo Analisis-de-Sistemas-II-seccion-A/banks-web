@@ -11,7 +11,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import { useEffect, useState } from "react";
 import { Bank } from "../interfaces/Bank.interface";
-import dataService from "../services/Data.Service";
+import dataService, { subscribeToSelectedBank } from "../services/Bank.service";
 import { DataGrid } from "@mui/x-data-grid";
 //import { TablePagination } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -94,7 +94,7 @@ const Transactions = ({ theme }: any) => {
 
   useEffect(() => {
     setSelectedBank(dataService.selectedBank);
-    const unsubscribe = dataService.subscribeToSelectedBank(
+    const unsubscribe = subscribeToSelectedBank(
       (newSelectedBank) => {
         setSelectedBank(newSelectedBank);
       }
