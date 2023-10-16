@@ -114,7 +114,7 @@ function App() {
               <Route path={`/transfer`} element={<Transfer />} />
               <Route
                 path={`/transaction/:type`}
-                element={<ExecuteTransaction />}
+                element={<ExecuteTransaction theme={theme} />}
               />
             </Routes>
           </div>
