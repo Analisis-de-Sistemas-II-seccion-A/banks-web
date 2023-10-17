@@ -126,216 +126,231 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
   };
 
   return (
-    <Container
-      maxWidth="lg"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        minHeight: "100vh",
-      }}
-    >
-      <Card
-        variant="outlined"
+    <Container maxWidth="lg">
+      <Typography
+        variant="h4"
+        textAlign={"start"}
+        color="textPrimary"
+        gutterBottom
+        marginBottom={"3rem"}
+      >
+        {type === "update" ? "Actualizar cuenta" : "Agregar cuenta"}
+      </Typography>
+      <Grid
+        container
+        maxWidth="lg"
         style={{
-          marginBottom: "16px",
-          backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
-          width: isLargeScreen ? "50%" : "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          minHeight: "100vh",
         }}
       >
-        <CardContent>
-          <Typography
-            variant="h6"
-            color="textPrimary"
-            textAlign="start"
-            gutterBottom
-          >
-            Información de la Cuenta
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <Tooltip
-                title="Ingrese el número de cuenta"
-                placement="top-start"
-              >
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="No. de Cuenta"
-                  variant="outlined"
-                  type="number"
-                  value={accountNumber}
-                  onChange={(e) => setAccountNumber(e.target.value)}
-                  error={accountNumberError}
-                  style={{
-                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                  }}
-                />
-              </Tooltip>
-            </Grid>
-            <Grid item xs={12} md={8}>
-              <Tooltip
-                title="Ingrese el nombre que le asignará a su cuenta"
-                placement="top-start"
-              >
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="Nombre de Cuenta"
-                  variant="outlined"
-                  value={accountName}
-                  onChange={(e) => setAccountName(e.target.value)}
-                  error={accountNameError}
-                  style={{
-                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                  }}
-                />
-              </Tooltip>
-            </Grid>
-            <Grid item xs={12} md={8}>
-              <FormControl fullWidth size="small" variant="outlined">
-                <InputLabel>Tipo de Cuenta</InputLabel>
-                <Select
-                  size="small"
-                  value={accountType}
-                  onChange={(e) => setAccountType(e.target.value)}
-                  label="Tipo de Cuenta"
-                  error={accountTypeError}
-                  style={{
-                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                  }}
-                >
-                  <MenuItem value="Monetaria">Monetaria</MenuItem>
-                  <MenuItem value="Ahorro">Ahorro</MenuItem>
-                  <MenuItem value="Planilla">Planilla</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <FormControl fullWidth size="small" variant="outlined">
-                <InputLabel>Moneda</InputLabel>
-                <Select
-                  size="small"
-                  value={currency}
-                  onChange={(e) => setCurrency(e.target.value)}
-                  label="Moneda"
-                  error={currencyError}
-                  style={{
-                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                  }}
-                >
-                  <MenuItem value="Quetzales">Quetzales</MenuItem>
-                  <MenuItem value="Dólares">Dólares</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
-      <Card
-        variant="outlined"
-        sx={{
-          backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
-          width: isLargeScreen ? "50%" : "100%",
-        }}
-      >
-        <CardContent>
-          <Typography
-            variant="h6"
-            color="textPrimary"
-            textAlign="start"
-            gutterBottom
-          >
-            Información del Titular
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Tooltip
-                title="Ingrese el nombre del titular"
-                placement="top-start"
-              >
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="Nombre"
-                  variant="outlined"
-                  value={representative}
-                  onChange={(e) => setRepresentative(e.target.value)}
-                  error={representativeError}
-                  style={{
-                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                  }}
-                />
-              </Tooltip>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Tooltip
-                title="Ingrese el número de teléfono del titular"
-                placement="top-start"
-              >
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="Teléfono"
-                  variant="outlined"
-                  type="number"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  error={phoneNumberError}
-                  style={{
-                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                  }}
-                />
-              </Tooltip>
-            </Grid>
-            <Grid item xs={12} md={8}>
-              <Tooltip
-                title="Ingrese la dirección de correo electrónico del titular"
-                placement="top-start"
-              >
-                <TextField
-                  fullWidth
-                  size="small"
-                  label="Correo"
-                  variant="outlined"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  error={emailError}
-                  style={{
-                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                  }}
-                />
-              </Tooltip>
-            </Grid>
-          </Grid>
-        </CardContent>
-        <div
+        <Card
+          variant="outlined"
           style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "16px",
-            marginBottom: "2rem",
+            marginBottom: "16px",
+            marginTop: "1rem",
+            backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+            width: isLargeScreen ? "50%" : "100%",
           }}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            startIcon={type === "update" ? <UpdateIcon /> : <SaveIcon />}
-            onClick={handleSubmit}
+          <CardContent>
+            <Typography
+              variant="h6"
+              color="textPrimary"
+              textAlign="start"
+              gutterBottom
+              marginBottom="1rem"
+            >
+              Información de la Cuenta
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={10} sm={5} md={4} lg={5} marginBottom="5px">
+                <Tooltip
+                  title="Ingrese el número de cuenta"
+                  placement="top-start"
+                >
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="Número de Cuenta"
+                    variant="outlined"
+                    type="number"
+                    value={accountNumber}
+                    onChange={(e) => setAccountNumber(e.target.value)}
+                    error={accountNumberError}
+                    style={{
+                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                    }}
+                  />
+                </Tooltip>
+              </Grid>
+              <Grid item xs={10} sm={6} md={6} lg={6} marginBottom="5px">
+                <Tooltip
+                  title="Ingrese el nombre que le asignará a su cuenta"
+                  placement="top-start"
+                >
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="Nombre de Cuenta"
+                    variant="outlined"
+                    value={accountName}
+                    onChange={(e) => setAccountName(e.target.value)}
+                    error={accountNameError}
+                    style={{
+                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                    }}
+                  />
+                </Tooltip>
+              </Grid>
+              <Grid item xs={5} sm={5} md={3} lg={4.5}>
+                <FormControl fullWidth size="small" variant="outlined">
+                  <InputLabel>Tipo de Cuenta</InputLabel>
+                  <Select
+                    size="small"
+                    value={accountType}
+                    onChange={(e) => setAccountType(e.target.value)}
+                    label="Tipo de Cuenta"
+                    error={accountTypeError}
+                    style={{
+                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                    }}
+                  >
+                    <MenuItem value="Monetaria">Monetaria</MenuItem>
+                    <MenuItem value="Ahorro">Ahorro</MenuItem>
+                    <MenuItem value="Planilla">Planilla</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={5} sm={5} md={2.5} lg={4}>
+                <FormControl fullWidth size="small" variant="outlined">
+                  <InputLabel>Moneda</InputLabel>
+                  <Select
+                    size="small"
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    label="Moneda"
+                    error={currencyError}
+                    style={{
+                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                    }}
+                  >
+                    <MenuItem value="Quetzales">Quetzales</MenuItem>
+                    <MenuItem value="Dólares">Dólares</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+        <Card
+          variant="outlined"
+          sx={{
+            backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+            width: isLargeScreen ? "50%" : "100%",
+          }}
+        >
+          <CardContent>
+            <Typography
+              variant="h6"
+              color="textPrimary"
+              textAlign="start"
+              gutterBottom
+              marginBottom="1rem"
+            >
+              Información del Titular
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={10} md={10} lg={12} marginBottom="5px">
+                <Tooltip
+                  title="Ingrese el nombre del titular"
+                  placement="top-start"
+                >
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="Nombre completo"
+                    variant="outlined"
+                    value={representative}
+                    onChange={(e) => setRepresentative(e.target.value)}
+                    error={representativeError}
+                    style={{
+                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                    }}
+                  />
+                </Tooltip>
+              </Grid>
+              <Grid item xs={6} sm={3} md={4} lg={4}>
+                <Tooltip
+                  title="Ingrese el número de teléfono del titular"
+                  placement="top-start"
+                >
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="Teléfono"
+                    variant="outlined"
+                    type="number"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    error={phoneNumberError}
+                    style={{
+                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                    }}
+                  />
+                </Tooltip>
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={8}>
+                <Tooltip
+                  title="Ingrese la dirección de correo electrónico del titular"
+                  placement="top-start"
+                >
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label="Correo electrónico"
+                    variant="outlined"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    error={emailError}
+                    style={{
+                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                    }}
+                  />
+                </Tooltip>
+              </Grid>
+            </Grid>
+          </CardContent>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "16px",
+              marginBottom: "2rem",
+            }}
           >
-            {type === "update" ? "Actualizar" : "Guardar"}
-          </Button>
-        </div>
-      </Card>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              startIcon={type === "update" ? <UpdateIcon /> : <SaveIcon />}
+              onClick={handleSubmit}
+            >
+              {type === "update" ? "Actualizar" : "Guardar"}
+            </Button>
+          </div>
+        </Card>
+      </Grid>
     </Container>
   );
 };

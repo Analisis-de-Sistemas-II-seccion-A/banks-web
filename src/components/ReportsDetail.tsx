@@ -17,7 +17,7 @@ import {
   FormControlLabel,
   Button,
 } from "@mui/material";
-import { Summarize } from "@mui/icons-material";
+import DownloadIcon from "@mui/icons-material/Download";
 
 function ReportsDetail({ theme }: any) {
   const isLargeScreen = useMediaQuery("(min-width: 600px)");
@@ -217,9 +217,9 @@ function ReportsDetail({ theme }: any) {
                 variant="contained"
                 color="primary"
                 size="large"
-                startIcon={<Summarize />}
+                startIcon={<DownloadIcon />}
               >
-                Generar Reporte
+                Descargar Reporte
               </Button>
             </div>
           </CardContent>

@@ -2,16 +2,19 @@
   margin: 0 auto;
   text-align: center;
 }
+
 .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
   -webkit-filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
   -webkit-filter: drop-shadow(0 0 2em #61dafbaa);
@@ -21,6 +24,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -30,25 +34,32 @@
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
     -webkit-animation: logo-spin infinite 20s linear;
-}
+  }
 }
 
 .card {
   padding: 2em;
 }
 
-.transaction-card{
+.transaction-card {
   background-color: #f0f0f0;
 }
 
-.textfield{
+.textfield {
   background-color: #ffffff;
-  color:#000000;
+  color: #000000;
   font-weight: 400;
 }
 
+.noarrows input[type=number]::-webkit-inner-spin-button,
+.noarrows input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
 .card-header {
- background-color: #eeeeee; 
+  background-color: #eeeeee;
 }
 
 .column-header {
@@ -57,6 +68,7 @@
   color: #3e5cb2;
   font-weight: 900;
 }
+
 .dark-column-header {
   background-color: #333333;
   font-size: medium;
@@ -66,12 +78,13 @@
 
 .dark-mode-cell {
   background-color: #333333;
-  color: white; 
+  color: white;
 }
 
 .textarea::placeholder {
   color: #a3a3a3;
 }
+
 /* xs */
 @media (max-width: 575.98px) {
   .textarea {
@@ -106,7 +119,7 @@
 }
 
 .light-appbar {
-  background-color: #ffffff; 
+  background-color: #ffffff;
   color: #000000;
 }
 
@@ -117,14 +130,17 @@
 
 .footer {
   background-color: #3e5cb2;
-  color: white; /* Puedes ajustar el color del texto según tus preferencias */
-  padding: 20px 0; /* Ajusta el relleno según sea necesario */
+  color: white;
+  /* Puedes ajustar el color del texto según tus preferencias */
+  padding: 20px 0;
+  /* Ajusta el relleno según sea necesario */
 }
 
 @media (max-width: 768px) {
   .column-flex {
     flex-direction: column;
-    text-align: center; /* Opcional, para centrar el contenido en pantallas pequeñas */
+    text-align: center;
+    /* Opcional, para centrar el contenido en pantallas pequeñas */
   }
 }
 
@@ -132,6 +148,3 @@
   min-height: 120vh;
   overflow-y: auto;
 }
-
-
-

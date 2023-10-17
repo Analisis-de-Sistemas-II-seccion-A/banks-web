@@ -483,7 +483,10 @@ function BankReconciliation({ theme }: any) {
         <DataGrid
           rows={rows}
           columns={columns}
-          sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "" }}
+          sx={{
+            backgroundColor: isDarkMode ? "#1a1a1a" : "",
+            color: isDarkMode ? "#959595" : "black",
+          }}
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 5 },
