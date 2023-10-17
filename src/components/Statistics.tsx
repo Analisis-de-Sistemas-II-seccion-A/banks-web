@@ -9,6 +9,7 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
+import DownloadIcon from "@mui/icons-material/Download";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
@@ -118,7 +119,7 @@ function Statistics({ theme }: any) {
               <Button
                 variant="contained"
                 color="primary"
-                startIcon={<AttachMoneyIcon />}
+                startIcon={<DownloadIcon />}
                 size="large"
               >
                 Descargar Informe
@@ -156,7 +157,11 @@ function Statistics({ theme }: any) {
               InputLabelProps={{
                 shrink: true,
               }}
-              style={{ marginRight: "16px" }}
+              style={{
+                marginRight: "16px",
+                backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+              }}
             />
             <TextField
               label="Fecha Final"
@@ -165,6 +170,10 @@ function Statistics({ theme }: any) {
               variant="outlined"
               InputLabelProps={{
                 shrink: true,
+              }}
+              style={{
+                backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
               }}
             />
           </Grid>
@@ -180,6 +189,10 @@ function Statistics({ theme }: any) {
               size="small"
               onChange={handleBankChange}
               displayEmpty
+              style={{
+                backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+              }}
               inputProps={{ "aria-label": "Seleccione un banco" }}
             >
               <MenuItem value="" disabled>
@@ -197,6 +210,10 @@ function Statistics({ theme }: any) {
                 size="small"
                 onChange={handleAccountChange}
                 displayEmpty
+                style={{
+                  backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                  borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                }}
                 inputProps={{ "aria-label": "Seleccione una cuenta" }}
               >
                 <MenuItem value="" disabled>

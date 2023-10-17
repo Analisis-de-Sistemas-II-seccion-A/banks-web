@@ -10,7 +10,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import DownloadIcon from "@mui/icons-material/Download";
+import SummarizeIcon from "@mui/icons-material/Summarize";
 import Avatar from "@mui/material/Avatar";
 import estadoCuenta from "../assets/estadoCuenta.png";
 import estadoCuentaDark from "../assets/estadoCuenta B.png";
@@ -77,7 +77,7 @@ function ReportGeneration({ theme }: any) {
                   variant="contained"
                   fullWidth
                   size="large"
-                  startIcon={<DownloadIcon />}
+                  startIcon={<SummarizeIcon />}
                   onClick={() => handleRedirect("reports/detail")}
                 >
                   Generar Reporte
@@ -117,7 +117,7 @@ function ReportGeneration({ theme }: any) {
                   variant="contained"
                   fullWidth
                   size="large"
-                  startIcon={<DownloadIcon />}
+                  startIcon={<SummarizeIcon />}
                   onClick={() => handleRedirect("reports/detail")}
                 >
                   Generar Reporte
@@ -159,7 +159,7 @@ function ReportGeneration({ theme }: any) {
                   variant="contained"
                   fullWidth
                   size="large"
-                  startIcon={<DownloadIcon />}
+                  startIcon={<SummarizeIcon />}
                   onClick={() => handleRedirect("reports/detail")}
                 >
                   Generar Reporte
@@ -201,7 +201,7 @@ function ReportGeneration({ theme }: any) {
                   variant="contained"
                   fullWidth
                   size="large"
-                  startIcon={<DownloadIcon />}
+                  startIcon={<SummarizeIcon />}
                   onClick={() => handleRedirect("reports/detail")}
                 >
                   Generar Reporte
@@ -243,7 +243,7 @@ function ReportGeneration({ theme }: any) {
                   variant="contained"
                   fullWidth
                   size="large"
-                  startIcon={<DownloadIcon />}
+                  startIcon={<SummarizeIcon />}
                   onClick={() => handleRedirect("reports/detail")}
                 >
                   Generar Reporte

@@ -75,10 +75,7 @@ function App() {
           </Hidden>
           <div className={isLargeScreen ? "content-container" : ""}>
             <Routes>
-              <Route
-                path={`/`}
-                element={<AccountsList theme={theme} />}
-              />
+              <Route path={`/`} element={<AccountsList theme={theme} />} />
               <Route
                 path={`/reports`}
                 element={<ReportGeneration theme={theme} />}
@@ -97,7 +94,7 @@ function App() {
               />
               <Route
                 path={`/reports/detail`}
-                element={<ReportsDetail />}
+                element={<ReportsDetail theme={theme} />}
               />
               <Route
                 path={`/reconciliation`}
@@ -111,7 +108,7 @@ function App() {
                 path={`/accounts/:type`}
                 element={<CreateOrUpdateAccount theme={theme} />}
               />
-              <Route path={`/transfer`} element={<Transfer />} />
+              <Route path={`/transfer`} element={<Transfer theme={theme} />} />
               <Route
                 path={`/transaction/:type`}
                 element={<ExecuteTransaction theme={theme} />}

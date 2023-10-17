@@ -12,10 +12,9 @@ import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import { useEffect, useState } from "react";
 import { Bank } from "../interfaces/Bank.interface";
 import dataService, { subscribeToSelectedBank } from "../services/Bank.service";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 //import { TablePagination } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
 
 const Transactions = ({ theme }: any) => {
   const navigate = useNavigate();
@@ -27,30 +26,38 @@ const Transactions = ({ theme }: any) => {
   const isDarkMode: boolean = theme.palette.mode === "dark";
   const isLargeScreen = useMediaQuery("(min-width: 1200px)");
 
-  const columns = [
+  const columns:  GridColDef[] = [
     {
       field: "fecha",
       headerName: "Fecha",
       headerClassName: isDarkMode ? "dark-column-header" : "column-header",
       width: 200,
+      headerAlign: "center",
+      align: "center",
     },
     {
       field: "monto",
       headerName: "Monto",
       headerClassName: isDarkMode ? "dark-column-header" : "column-header",
       width: 200,
+      headerAlign: "center",
+      align: "center",
     },
     {
       field: "tipo",
       headerName: "Tipo",
       headerClassName: isDarkMode ? "dark-column-header" : "column-header",
       width: 200,
+      headerAlign: "center",
+      align: "center",
     },
     {
       field: "descripcion",
       headerName: "Descripción",
       headerClassName: isDarkMode ? "dark-column-header" : "column-header",
       width: 258,
+      headerAlign: "center",
+      align: "center",
     },
   ];
 
@@ -106,7 +113,11 @@ const Transactions = ({ theme }: any) => {
   }, []);
 
   if (!selectedBank) {
-    return <div style={{ marginBottom: "25rem" }}>Seleccione un Banco.</div>;
+    return (
+      <div style={{ marginBottom: "25rem", marginTop: "0.05rem" }}>
+        Seleccione un banco.
+      </div>
+    );
   }
   return (
     <Container maxWidth="lg">
@@ -119,12 +130,12 @@ const Transactions = ({ theme }: any) => {
         sx={{
           marginTop: "2rem",
           marginBottom: "2rem",
-          display: isLargeScreen ? "flex" : "grid",
+          //display: isLargeScreen ? "flex" : "grid",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <Grid item xs={isLargeScreen ? 7 : 12}>
+        <Grid item xs={12} sm={9} md={7} lg={6.5}>
           <Card>
             <CardHeader
               title="Realizar Transacción"
@@ -132,7 +143,7 @@ const Transactions = ({ theme }: any) => {
               sx={{ backgroundColor: isDarkMode ? "#333333" : "" }}
             />
             <CardContent>
-              <div style={{ marginRight: "5rem", marginLeft: "5rem" }}>
+              <div style={{ marginRight: "2rem", marginLeft: "2rem" }}>
                 <Button
                   variant="contained"
                   fullWidth
@@ -166,7 +177,8 @@ const Transactions = ({ theme }: any) => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={isLargeScreen ? 3 : 12}>
+
+        <Grid item xs={12} sm={9} md={4} lg={3}>
           <Card>
             <CardHeader
               title="Banco Seleccionado"
@@ -183,15 +195,15 @@ const Transactions = ({ theme }: any) => {
               <Avatar
                 alt="Bank Logo"
                 src={selectedBank.image}
-                sx={{ height: "147px", width: "147px" }}
+                sx={{ height: "164px", width: "164px" }}
               />
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={isLargeScreen ? 9 : 12} sx={{ marginTop: "2rem" }}>
+        <Grid item xs={12} sm={8} md={8.5} lg={9} sx={{ marginTop: "2rem" }}>
           <Typography
             variant="h6"
-            align={"left"}
+            align={isLargeScreen ? "left" : "center"}
             color="textPrimary"
             sx={{ marginBottom: "1rem" }}
           >
@@ -200,7 +212,10 @@ const Transactions = ({ theme }: any) => {
           <DataGrid
             rows={rows}
             columns={columns}
-            sx={{ color: isDarkMode ? "#959595" : "black" }}
+            sx={{
+              backgroundColor: isDarkMode ? "#1a1a1a" : "",
+              color: isDarkMode ? "#959595" : "black"
+            }}
             initialState={{
               pagination: {
                 paginationModel: { page: 0, pageSize: 5 },

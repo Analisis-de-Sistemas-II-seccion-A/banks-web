@@ -31,7 +31,7 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
   const isSmallScreen = useMediaQuery("(max-width: 1200px)");
 
   const columnWidths: any = {
-    fecha: "20%",
+    fecha: "13%",
     importe: "15%",
     concepto: "20%",
     conciliar: "20%",
@@ -119,6 +119,7 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                               <StyledSmallTextField
                                 variant="outlined"
                                 fullWidth
+                                size="small"
                                 type="date"
                                 label="Fecha"
                                 InputLabelProps={{
@@ -136,6 +137,7 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                               <StyledSmallTextField
                                 variant="outlined"
                                 fullWidth
+                                size="small"
                                 type="number"
                                 label="Importe"
                                 InputLabelProps={{
@@ -188,6 +190,7 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                               <StyledSmallTextField
                                 variant="outlined"
                                 fullWidth
+                                size="small"
                                 type="date"
                                 label="Fecha"
                                 InputLabelProps={{
@@ -205,6 +208,7 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                               <StyledSmallTextField
                                 variant="outlined"
                                 fullWidth
+                                size="small"
                                 type="number"
                                 label="Importe"
                                 InputLabelProps={{
@@ -222,6 +226,7 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                               <StyledSelect
                                 variant="outlined"
                                 fullWidth
+                                size="small"
                                 value={row[column]}
                                 onChange={(e: any) =>
                                   handleInputChange(e, rowIndex, column)
@@ -320,7 +325,7 @@ const ReconciliationDetail = ({ theme }: any) => {
           marginTop: "2rem",
         }}
       >
-        <CardContent>
+        <CardContent sx={{padding: "2rem"}}>
           {isLargeScreen ? (
             <Grid container spacing={2} justifyContent="flex-end">
               <Grid item xs={2}>
@@ -355,7 +360,7 @@ const ReconciliationDetail = ({ theme }: any) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={3} >
                 <FormControl size="small" variant="outlined" fullWidth>
                   <InputLabel id="cuenta-label">
                     Selecciona la cuenta
@@ -431,7 +436,7 @@ const ReconciliationDetail = ({ theme }: any) => {
             </Grid>
             <Grid item xs={3}>
               <Typography variant="body1" gutterBottom>
-                {bankAmount}
+              Q. {bankAmount}
               </Typography>
             </Grid>
           </Grid>
@@ -489,11 +494,11 @@ const ReconciliationDetail = ({ theme }: any) => {
             </Grid>
             <Grid item xs={3}>
               <Typography variant="body1" gutterBottom>
-                {bookValues}
+               Q.  {bookValues}
               </Typography>
             </Grid>
           </Grid>
-          <div style={{ marginBottom: "2px", marginTop: "2rem" }}>
+          <div style={{ marginBottom: "2px", marginTop: "1rem" }}>
             <Button
               variant="contained"
               size="large"
