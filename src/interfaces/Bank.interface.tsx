@@ -1,13 +1,8 @@
-export type Bank = {
-    id: number;
-    image: string;
-    name: string;
-  };
-  
-  export type DataServiceContextType = {
-    banks: Bank[];
-    selectedBank: Bank | null;
-    addBank: (newBank: Bank) => void;
-    selectBank: (bank: Bank | null) => void;
-  };
-  
+export interface Bank {
+  BNC_BANCO: number;
+  BNC_NOMBRE: string;
+  BNC_DIRECCION: string;
+  BNC_TELEFONO: number;
+  BNC_CORREO: string;
+  BNC_IMAGEN: string;
+}

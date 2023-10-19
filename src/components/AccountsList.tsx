@@ -8,47 +8,105 @@ import {
 } from "@mui/material";
 import dataService, { subscribeToSelectedBank } from "../services/Bank.service";
 import { Bank } from "../interfaces/Bank.interface";
+import { Account } from "../interfaces/Account.interface";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { green } from "@mui/material/colors";
+import bi from "../assets/bi.jpg";
+import banrural from "../assets/banrural.png";
+import bam from "../assets/bam.jpg";
+import CatalogService from "../services/Catalog.service";
+import { Currency } from "../interfaces/Currency.interface";
+import { AccountType } from "../interfaces/AccountType.interface";
 
 export default function AccountList({ theme }: any) {
   const navigate = useNavigate();
-  const isLargeScreen = useMediaQuery("(min-width: 1200px)");
+  const isLargeScreen = useMediaQuery("(min-width: 1200px");
   const isDarkMode: boolean = theme.palette.mode === "dark";
   const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const [accountTypes, setAccountTypes] = useState<AccountType[]>([]);
+
   const handleRedirect = (route: string) => {
     navigate(`/${route}`);
   };
+
+  const obtenerImagen = (nombreImagen: string) => {
+    if (nombreImagen === 'bi') return bi;
+    if (nombreImagen === 'banrural') return banrural;
+    if (nombreImagen === 'bam') return bam;
+  }
+
+  useEffect(() => {
+    setSelectedBank(dataService.selectedBank);
+    const unsubscribe = subscribeToSelectedBank(
+      (newSelectedBank) => {
+        setSelectedBank(newSelectedBank);
+      }
+    );
+    return () => {
+      unsubscribe();
+    };
+  }, []); 
+
+  useEffect(() => {
+    if (selectedBank) {
+      CatalogService.getCurrencies().then((data) => {
+        setCurrencies(data);
+      });
+
+      CatalogService.getAccountTypes().then((data) => {
+        setAccountTypes(data);
+      });
+
+      dataService.getAccounts(selectedBank.BNC_BANCO).then((data) => {
+        if(data) {
+          setAccounts(data);
+          
+        }
+      });
+    }
+  }, [selectedBank]); 
+
+  const rows = accounts.map((account) => ({
+    id: account.CNT_CUENTA,
+    CNT_NUMERO_CUENTA: account.CNT_NUMERO_CUENTA,
+    TCN_TIPO_CUENTA: accountTypes.find((type) => type.TCN_TIPO_CUENTA === account.TCN_TIPO_CUENTA)?.TCN_NOMBRE,
+    CNT_NOMBRE: account.CNT_NOMBRE,
+    CNT_TITULAR: account.CNT_TITULAR,
+    MND_MONEDA: currencies.find((currency) => currency.MND_MONEDA === account.MND_MONEDA)?.MND_ABREVIATURA,
+  }));
+
   const columns: GridColDef[] = [
     {
-      field: "accountNumber",
+      field: "CNT_NUMERO_CUENTA",
       headerName: "Numero de cuenta",
+      headerAlign: "center",
+      align: "center",
+      width: 150,
+      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
+    },
+    {
+      field: "CNT_NOMBRE",
+      headerName: "Nombre de cuenta",
+      headerAlign: "center",
+      align: "center",
+      width: 300,
+      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
+    },
+    {
+      field: "TCN_TIPO_CUENTA",
+      headerName: "Tipo de cuenta",
       headerAlign: "center",
       align: "center",
       width: 200,
       headerClassName: isDarkMode ? "dark-column-header" : "column-header",
     },
     {
-      field: "accountType",
-      headerName: "Tipo de cuenta",
-      headerAlign: "center",
-      align: "center",
-      width: 250,
-      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
-    },
-    {
-      field: "accountUsage",
-      headerName: "Uso de la cuenta",
-      headerAlign: "center",
-      align: "center",
-      width: 278,
-      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
-    },
-    {
-      field: "accountHolder",
+      field: "CNT_TITULAR",
       headerName: "Titular de la cuenta",
       headerAlign: "center",
       align: "center",
@@ -56,15 +114,23 @@ export default function AccountList({ theme }: any) {
       headerClassName: isDarkMode ? "dark-column-header" : "column-header",
     },
     {
+      field: "MND_MONEDA",
+      headerName: "Moneda",
+      headerAlign: "center",
+      align: "center",
+      width: 100,
+      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
+    },
+    {
       field: "details",
       headerName: "Ver Detalle",
       align: "center",
       headerAlign: "center",
-      width: 150,
+      width: 128,
       headerClassName: isDarkMode ? "dark-column-header" : "column-header",
-      renderCell: () => (
+      renderCell: (params) => (
         <IconButton
-          onClick={() => handleRedirect("accounts/1/detail")}
+          onClick={() => handleRedirect(`accounts/${params.row.id}/detail`)}
           size="small"
           style={{ color: green[500] }}
         >
@@ -73,56 +139,7 @@ export default function AccountList({ theme }: any) {
       ),
     },
   ];
-
-  const rows = [
-    {
-      id: 1,
-      accountNumber: "123456789",
-      accountType: "Cuenta Corriente",
-      accountUsage: "Pago a Proveedores",
-      accountHolder: "Ferretería Estrellita",
-    },
-    {
-      id: 2,
-      accountNumber: "987654321",
-      accountType: "Cuenta de Ahorro",
-      accountUsage: "Reserva de Emergencia",
-      accountHolder: "Ferretería Estrellita",
-    },
-    {
-      id: 3,
-      accountNumber: "555000111",
-      accountType: "Cuenta de Ahorro",
-      accountUsage: "Fondos de Expansión",
-      accountHolder: "Ferretería Estrellita",
-    },
-    {
-      id: 4,
-      accountNumber: "222333444",
-      accountType: "Cuenta Corriente",
-      accountUsage: "Pago de Nómina",
-      accountHolder: "Ferretería Estrellita",
-    },
-    {
-      id: 5,
-      accountNumber: "888777666",
-      accountType: "Cuenta de Nómina",
-      accountUsage: "Pago de Salario",
-      accountHolder: "Ferretería Estrellita",
-    },
-  ];
-
-  useEffect(() => {
-    setSelectedBank(dataService.selectedBank);
-    const unsubscribe = subscribeToSelectedBank((newSelectedBank) => {
-      setSelectedBank(newSelectedBank);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
+  
   if (!selectedBank) {
     return <div style={{ marginBottom: "25rem" }}>Seleccione un banco.</div>;
   }
@@ -139,16 +156,11 @@ export default function AccountList({ theme }: any) {
       <div style={{ display: "flex", alignItems: "center" }}>
         <Avatar
           alt="User Avatar"
-          src={selectedBank.image}
+          src={obtenerImagen(selectedBank.BNC_IMAGEN)}
           style={{ marginRight: "2rem" }}
         />
-        <Typography
-          variant="h4"
-          align={"left"}
-          color="textPrimary"
-          gutterBottom
-        >
-          Cuentas {selectedBank.name}
+        <Typography variant="h4" align={"left"} color="textPrimary" gutterBottom>
+          Cuentas {selectedBank ? selectedBank.BNC_NOMBRE : ""}
         </Typography>
       </div>
       <div style={{ textAlign: isLargeScreen ? "end" : "center" }}>

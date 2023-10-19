@@ -13,8 +13,10 @@ import { useEffect, useState } from "react";
 import { Bank } from "../interfaces/Bank.interface";
 import dataService, { subscribeToSelectedBank } from "../services/Bank.service";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-//import { TablePagination } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import bi from "../assets/bi.jpg";
+import banrural from "../assets/banrural.png";
+import bam from "../assets/bam.jpg";
 
 const Transactions = ({ theme }: any) => {
   const navigate = useNavigate();
@@ -112,6 +114,12 @@ const Transactions = ({ theme }: any) => {
     };
   }, []);
 
+  const obtenerImagen = (nombreImagen: string) => {
+    if (nombreImagen === 'bi') return bi;
+    if (nombreImagen === 'banrural') return banrural;
+    if (nombreImagen === 'bam') return bam;
+  }
+
   if (!selectedBank) {
     return (
       <div style={{ marginBottom: "25rem", marginTop: "0.05rem" }}>
@@ -122,7 +130,7 @@ const Transactions = ({ theme }: any) => {
   return (
     <Container maxWidth="lg">
       <Typography variant="h4" align={"left"} color="textPrimary" gutterBottom>
-        Transacciones {selectedBank.name}
+        Transacciones {selectedBank.BNC_NOMBRE}
       </Typography>
       <Grid
         container
@@ -194,7 +202,7 @@ const Transactions = ({ theme }: any) => {
             >
               <Avatar
                 alt="Bank Logo"
-                src={selectedBank.image}
+                src={obtenerImagen(selectedBank.BNC_IMAGEN)}
                 sx={{ height: "164px", width: "164px" }}
               />
             </CardContent>

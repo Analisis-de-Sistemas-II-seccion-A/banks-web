@@ -6,20 +6,31 @@ import Avatar from "@mui/material/Avatar";
 import {
   Button,
   Container,
-  IconButton,
   ListItemIcon,
   MenuItem,
-  TextField,
   useMediaQuery,
 } from "@mui/material";
 import bi from "../assets/bi.jpg";
 import bam from "../assets/bam.jpg";
+import banrural from "../assets/banrural.png";
 import { useNavigate, useParams } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import WalletIcon from "@mui/icons-material/Wallet";
-import SearchIcon from "@mui/icons-material/Search";
+import { Account } from "../interfaces/Account.interface";
+import React, { useEffect } from "react";
+import AccountService from "../services/Account.service";
+import CatalogService from "../services/Catalog.service";
+import { AccountType } from "../interfaces/AccountType.interface";
+import { Currency } from "../interfaces/Currency.interface";
+import BankService from "../services/Bank.service";
+import { Bank } from "../interfaces/Bank.interface";
+import { DateRange, DateRangePicker, LocalizationProvider } from "@mui/x-date-pickers-pro";
+import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
+import { DateTime } from "luxon";
+import TransactionService from "../services/Transaction.service";
+import { TransactionHistory } from "../interfaces/TransactionHistory.interface";
 
 const styles = {
   button: {
@@ -39,30 +50,57 @@ const AccountDetail = ({ theme }: any) => {
   const { account } = useParams();
   const navigate = useNavigate();
   const isLargeScreen = useMediaQuery("(min-width: 600px)");
-  const accounts = [
-    {
-      id: 1,
-      name: "Cuenta Monetaria BAM",
-      number: "000-12667-3",
-      accountType: "Cuenta Monetaria en Quetzales",
-      principal: "Elmer Alessandro Juárez Hernández",
-      ammount: 215000,
-      paymentType: "Pago de Impuestos",
-      currency: "GTQ",
-      bank: { id: 1, image: bam, name: "Banco Agromercantil" },
-    },
-    {
-      id: 2,
-      name: "Cuenta Monetaria BI",
-      number: "000-3222-3",
-      accountType: "Cuenta Monetaria en Dólares",
-      principal: "Elmer Alessandro Juárez Hernández",
-      ammount: 150000,
-      paymentType: "Pago de Servicios",
-      currency: "USD",
-      bank: { id: 2, image: bi, name: "Banco Industrial" },
-    },
-  ];
+  const [selectedAccount, setSelectedAccount] = React.useState<Account | null>(null);
+  const [accountTypes, setAccountTypes] = React.useState<AccountType[]>([]);
+  const [currencies, setCurrencies] = React.useState<Currency[]>([]);
+  const [banks, setBanks] = React.useState<Bank[]>([]);
+  const [value, setValue] = React.useState<DateRange<DateTime>>([null, null]);
+  const [transactionHistory, setTransactionHistory] = React.useState<TransactionHistory[]>([]);
+
+  const handleRedirect = (route: string) => {
+    navigate(`/${route}`);
+  };
+
+  const formatCurrency = (ammount: number, currency: string) => {
+    return new Intl.NumberFormat(currency === "GTQ" ? "es-GT" : "", {
+      style: "currency",
+      currency: currency,
+    }).format(ammount);
+  };
+
+  const obtenerImagen = (nombreImagen: string) => {
+    if (nombreImagen === 'bi') return bi;
+    if (nombreImagen === 'banrural') return banrural;
+    if (nombreImagen === 'bam') return bam;
+  }
+
+  const handleChangeDates = async (newValue: DateRange<DateTime>) => {
+    setValue(newValue);
+    await TransactionService.getTransactionHistoryByDate(newValue[0]?.toISODate() || "", newValue[1]?.toISODate() || "").then((data) => {
+      setTransactionHistory(data);
+    });
+  }
+
+  useEffect(() => {
+    if (account) {
+      CatalogService.getAccountTypes().then((data) => {
+        setAccountTypes(data);
+      });
+
+      CatalogService.getCurrencies().then((data) => {
+        setCurrencies(data);
+      });
+
+      BankService.getBanks().then((data) => {
+        setBanks(data);
+      });
+
+      AccountService.getAccountByid(parseInt(account)).then((data) => {
+        setSelectedAccount(data);
+      });
+    }
+  }, []);
+
 
   const columns: GridColDef[] = [
     {
@@ -115,70 +153,24 @@ const AccountDetail = ({ theme }: any) => {
     },
   ];
 
-  const rows = [
-    {
-      id: 1,
-      date: "20/08/2023",
-      document: "522665",
-      description: "Pago de ISR Trimestral",
-      debit: "Q15,000.00",
-      credit: "",
-      balance: "Q.215,000.00",
-    },
-    {
-      id: 2,
-      date: "16/08/2023",
-      document: "565855",
-      description: "Transferencia desde CTA 456445",
-      debit: "",
-      credit: "Q10,000.00",
-      balance: "Q.230,000.00",
-    },
-    {
-      id: 3,
-      date: "14/08/2023",
-      document: "458565",
-      description: "Pago de Servicio Telefónico",
-      debit: "Q5,000.00",
-      credit: "",
-      balance: "Q.220,000.00",
-    },
-    {
-      id: 4,
-      date: "10/08/2023",
-      document: "822655",
-      description: "Pago de Préstamos",
-      debit: "Q.10,000.00",
-      credit: "",
-      balance: "Q.225,000.00",
-    },
-    {
-      id: 5,
-      date: "07/08/2023",
-      document: "866555",
-      description: "Depósito Bancario, boleta NO.866555",
-      debit: "",
-      credit: "Q.235,000.00",
-      balance: "Q.235,000.00",
-    },
-  ];
+  const rows = transactionHistory.map((transaction) => {
+    return {
+      id: transaction.dbid,
+      date:  DateTime.fromFormat(transaction.fecha.toString(), "yyyy-MM-dd").toLocaleString(),
+      document: transaction.documento,
+      description: transaction.descripcion,
+      debit: transaction.tipo_operacion === "RESTA"? formatCurrency(transaction.monto_transaccion, currencies.find((currency) => currency.MND_MONEDA === selectedAccount?.MND_MONEDA)?.MND_ABREVIATURA || "GTQ"):"",
+      credit: transaction.tipo_operacion === "SUMA"? formatCurrency(transaction.monto_transaccion, currencies.find((currency) => currency.MND_MONEDA === selectedAccount?.MND_MONEDA)?.MND_ABREVIATURA || "GTQ"): "",
+      balance: formatCurrency(transaction.nuevo_monto, currencies.find((currency) => currency.MND_MONEDA === selectedAccount?.MND_MONEDA)?.MND_ABREVIATURA || "GTQ"),
+    };
+  });
 
-  const handleRedirect = (route: string) => {
-    navigate(`/${route}`);
-  };
-
-  const selectedAccount = accounts.find((acc) => acc.id === Number(account));
 
   if (!selectedAccount) {
     return (
       <div style={{ marginBottom: "25rem" }}>No se encontró el banco.</div>
     );
   }
-
-  const formattedAmount = new Intl.NumberFormat("es-GT", {
-    style: "currency",
-    currency: selectedAccount.currency,
-  }).format(selectedAccount.ammount);
 
   return (
     <Container
@@ -196,10 +188,10 @@ const AccountDetail = ({ theme }: any) => {
           <Grid container spacing={2}>
             <Grid item xs={6} sx={{ display: "grid", alignItems: "center" }}>
               <Typography variant="h6" style={{ color: "white" }}>
-                {selectedAccount.name}
+                {selectedAccount.CNT_NOMBRE}
               </Typography>
               <Typography variant="body2" style={{ color: "white" }}>
-                {selectedAccount.bank.name}
+                {banks.find((bank) => bank.BNC_BANCO === selectedAccount.BNC_BANCO)?.BNC_NOMBRE}
               </Typography>
             </Grid>
             <Grid
@@ -209,7 +201,7 @@ const AccountDetail = ({ theme }: any) => {
             >
               <Avatar
                 alt="Bank Logo"
-                src={selectedAccount.bank.image}
+                src={obtenerImagen(banks.find((bank) => bank.BNC_BANCO === selectedAccount.BNC_BANCO)?.BNC_IMAGEN || "")}
                 sx={{ width: 50, height: 50, backgroundColor: "white" }}
               />
             </Grid>
@@ -231,25 +223,19 @@ const AccountDetail = ({ theme }: any) => {
               sx={{ display: "grid", alignItems: "center" }}
             >
               <Typography variant="h5" style={{ marginBottom: "1rem" }}>
-                Cuenta No. {selectedAccount.number}
+                Cuenta No. {selectedAccount.CNT_NUMERO_CUENTA}
               </Typography>
               <Typography variant="body1">
                 <span style={{ color: isDarkMode ? "#e6b061" : "#3e5cb2" }}>
                   Titular:{" "}
                 </span>
-                {selectedAccount.principal}
+                {selectedAccount.CNT_TITULAR}
               </Typography>
               <Typography variant="body1">
                 <span style={{ color: isDarkMode ? "#e6b061" : "#3e5cb2" }}>
                   Tipo:{" "}
                 </span>
-                {selectedAccount.accountType}
-              </Typography>
-              <Typography variant="body1">
-                <span style={{ color: isDarkMode ? "#e6b061" : "#3e5cb2" }}>
-                  Uso de la cuenta:{" "}
-                </span>
-                {selectedAccount.paymentType}
+                {accountTypes.find((type) => type.TCN_TIPO_CUENTA === selectedAccount.TCN_TIPO_CUENTA)?.TCN_NOMBRE}
               </Typography>
             </Grid>
             <Grid item xs={isLargeScreen ? 6 : 12}>
@@ -292,7 +278,7 @@ const AccountDetail = ({ theme }: any) => {
               sx={{ display: "grid", alignItems: "center" }}
             >
               <Typography variant="h6">Saldo en la Cuenta</Typography>
-              <Typography variant="h4">{formattedAmount}</Typography>
+              <Typography variant="h4">{formatCurrency(selectedAccount.CNT_SALDO, currencies.find((currency) => currency.MND_MONEDA === selectedAccount.MND_MONEDA)?.MND_ABREVIATURA || "GTQ")}</Typography>
             </Grid>
             <Grid item xs={isLargeScreen ? 6 : 12}>
               <div style={{ display: "grid", justifyContent: "center" }}>
@@ -315,7 +301,6 @@ const AccountDetail = ({ theme }: any) => {
       <div
         style={{
           width: "100%",
-          //height: 200, altura
           marginTop: "2rem",
           marginBottom: "2rem",
         }}
@@ -335,35 +320,13 @@ const AccountDetail = ({ theme }: any) => {
                 marginTop: "1rem",
               }}
             >
-              <TextField
-                label="Fecha Inicial"
-                type="date"
-                variant="outlined"
-                size="small"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                style={{
-                  marginRight: isLargeScreen ? "16px" : "",
-                  marginBottom: isLargeScreen ? "" : "20px",
-                }}
+                <LocalizationProvider dateAdapter={AdapterLuxon}>
+              <DateRangePicker
+                value={value}
+                maxDate={DateTime.now()}
+                onAccept={(newValue) => handleChangeDates(newValue)}
               />
-              <TextField
-                label="Fecha Final"
-                type="date"
-                variant="outlined"
-                size="small"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                style={{
-                  marginRight: isLargeScreen ? "16px" : "",
-                  marginBottom: isLargeScreen ? "" : "20px",
-                }}
-              />
-              <IconButton aria-label="Buscar">
-                <SearchIcon />
-              </IconButton>
+                </LocalizationProvider>
             </div>
           </CardContent>
         </Card>
@@ -374,6 +337,14 @@ const AccountDetail = ({ theme }: any) => {
             pagination: {
               paginationModel: { page: 0, pageSize: 5 },
             },
+            sorting: {
+              sortModel: [
+                {
+                  field: 'date',
+                  sort: 'desc', 
+                },
+              ],
+            }, 
           }}
           sx={{
             backgroundColor: isDarkMode ? "#1a1a1a" : "",

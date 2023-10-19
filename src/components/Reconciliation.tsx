@@ -19,6 +19,9 @@ import dataService, { subscribeToSelectedBank } from "../services/Bank.service";
 import { Bank } from "../interfaces/Bank.interface";
 import { useNavigate } from "react-router-dom";
 import { ArrowForwardIosOutlined } from "@mui/icons-material";
+import bi from '../assets/bi.jpg';
+import banrural from '../assets/banrural.png';
+import bam from '../assets/bam.jpg';
 
 function BankReconciliation({ theme }: any) {
   const navigate = useNavigate();
@@ -186,10 +189,17 @@ function BankReconciliation({ theme }: any) {
       }
     );
 
+    
     return () => {
       unsubscribe();
     };
   }, []);
+  
+  const obtenerImagen = (nombreImagen: string) => {
+    if (nombreImagen === 'bi') return bi;
+    if (nombreImagen === 'banrural') return banrural;
+    if (nombreImagen === 'bam') return bam;
+  }
 
   if (!selectedBank) {
     return (
@@ -198,6 +208,7 @@ function BankReconciliation({ theme }: any) {
       </div>
     );
   }
+
 
   return (
     <Container maxWidth="lg">
@@ -210,7 +221,7 @@ function BankReconciliation({ theme }: any) {
       >
         <Avatar
           alt="User Avatar"
-          src={selectedBank.image}
+          src={obtenerImagen(selectedBank.BNC_IMAGEN)}
           style={{ marginRight: "2rem" }}
         />
         <Typography
@@ -219,7 +230,7 @@ function BankReconciliation({ theme }: any) {
           color="textPrimary"
           gutterBottom
         >
-          Conciliación Bancaria {selectedBank.name}
+          Conciliación Bancaria {selectedBank.BNC_NOMBRE}
         </Typography>
       </div>
       <Card>

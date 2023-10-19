@@ -11,16 +11,16 @@ import { IconButton, Avatar, MenuItem, Button } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Logotipo from '../assets/Logotipo B.png';
-import bi from '../assets/bi.jpg';
-import banrural from '../assets/banrural.png';
-import bam from '../assets/bam.jpg';
 import profile from '../assets/profile.png';
 import dataService from '../services/Bank.service';
 import { Bank } from '../interfaces/Bank.interface';
 import { Logout, TransitEnterexit } from '@mui/icons-material';
 import { environment } from '../environments/environment';
-import { Link } from 'react-router-dom';
 import AuthService from '../services/Auth.service';
+import { Link } from 'react-router-dom';
+import bi from '../assets/bi.jpg';
+import banrural from '../assets/banrural.png';
+import bam from '../assets/bam.jpg';
 
 const drawerWidth = 240;
 
@@ -82,6 +82,20 @@ export default function AccountsDrawer() {
   const [showProfile, setShowProfile] = React.useState(false);
   const user = { name: 'Alessandro Juárez', email: 'ejuarezh5@miumg.edu.gt' };
   const [profileMenuOpen, setProfileMenuOpen] = React.useState(false);
+  const [banks, setBanks] = React.useState<Bank[]>([]);
+
+  React.useEffect(() => {
+    dataService.getBanks()
+      .then((result) => {
+        setBanks(result);
+        if (result.length > 0) {
+          dataService.selectBank(result[0]);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -97,14 +111,14 @@ export default function AccountsDrawer() {
     setProfileMenuOpen(!profileMenuOpen);
   };
 
-  const banks: Bank[] = [{ id: 1, image: bi, name: 'Banco Industrial' }, { id: 2, image: banrural, name: 'Banrural' }, { id: 3, image: bam, name: 'Banco Agromercantil' }];
-
-  if (banks.length > 0) {
-    dataService.selectBank(banks[0]);
-  }
-
   const handleLogout = () => {
     AuthService.logout();
+  }
+
+  const obtenerImagen = (nombreImagen: string) => {
+    if (nombreImagen === 'bi') return bi;
+    if (nombreImagen === 'banrural') return banrural;
+    if (nombreImagen === 'bam') return bam;
   }
 
   return (
@@ -128,7 +142,7 @@ export default function AccountsDrawer() {
         <List>
           {banks.map((bank) => (
             <ListItem
-              key={bank.name}
+              key={bank.BNC_BANCO}
               disablePadding
               sx={{ display: 'block' }}
             >
@@ -147,9 +161,9 @@ export default function AccountsDrawer() {
                     justifyContent: 'center',
                   }}
                 >
-                  <img src={bank.image} alt={bank.name} width={24} height={24} />
+                  <img src={obtenerImagen(bank.BNC_IMAGEN)} alt={bank.BNC_NOMBRE} width={24} height={24} />
                 </ListItemIcon>
-                <ListItemText primary={bank.name} sx={{ opacity: open ? 1 : 0, color: 'white' }} />
+                <ListItemText primary={bank.BNC_NOMBRE} sx={{ opacity: open ? 1 : 0, color: 'white' }} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -177,7 +191,6 @@ export default function AccountsDrawer() {
                 <Button onClick={handleLogout} sx={{ color: 'white' }}>Cerrar sesión</Button>
               </MenuItem>
             </div>
-
           )}
         </div>
       </Drawer>

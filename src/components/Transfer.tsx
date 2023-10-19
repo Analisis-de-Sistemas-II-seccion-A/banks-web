@@ -41,7 +41,7 @@ const Transfer = ({ theme }: any) => {
         gutterBottom
         marginBottom={"2rem"}
       >
-        Transferencia de Cuenta de {selectedBank?.name}
+        Transferencia de Cuenta de {selectedBank?.BNC_NOMBRE}
       </Typography>
       <Grid
         container

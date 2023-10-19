@@ -80,7 +80,7 @@ const ExecuteTransaction = ({ theme }: any) => {
         gutterBottom
         marginBottom={"3rem"}
       >
-        {titleText} {selectedBank?.name}
+        {titleText} {selectedBank?.BNC_NOMBRE}
       </Typography>
 
       <Grid
