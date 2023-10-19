@@ -96,6 +96,7 @@ function Statistics({ theme }: any) {
     <Container maxWidth="lg">
       <Title variant="h4">Estadísticas</Title>
       <Card
+        variant="outlined"
         sx={{
           marginBottom: "2rem",
           marginTop: "2rem",
@@ -228,7 +229,7 @@ function Statistics({ theme }: any) {
             )}
           </div>
         </CardContent>
-      </Card>
+      </Card >
       <GridContainer container spacing={2}>
         <GridItem item xs={12} sm={6} md={3}>
           <StyledCard variant="outlined">
