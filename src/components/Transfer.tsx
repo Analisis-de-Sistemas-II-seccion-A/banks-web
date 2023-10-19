@@ -7,10 +7,12 @@ import {
   Card,
   Grid,
   TextField,
-  TextareaAutosize,
+  Tooltip,
   Button,
   MenuItem,
   InputAdornment,
+  OutlinedInput,
+  useMediaQuery,
 } from "@mui/material";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import dataservice, { subscribeToSelectedBank } from "../services/Bank.service";
@@ -19,7 +21,7 @@ import { useEffect, useState } from "react";
 
 const Transfer = ({ theme }: any) => {
   const isDarkMode: boolean = theme.palette.mode === "dark";
-
+  const isLargeScreen = useMediaQuery("(min-width: 600px)");
   const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
   useEffect(() => {
     setSelectedBank(dataservice.selectedBank);
@@ -54,31 +56,27 @@ const Transfer = ({ theme }: any) => {
       >
         <Grid container justifyContent="center">
           <Grid xs={12} sm={8} md={6} lg={6}>
-            <Card sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}>
+            <Card sx={{ backgroundColor: isDarkMode ? "#292929" : "#f7f7f7" }}>
               <div style={{ margin: "20px" }}>
                 <form>
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
-                      <Typography variant="subtitle1" textAlign={"start"}>
-                        <strong>Número de la cuenta origen</strong>
-                      </Typography>
                       <FormControl size="small" style={{ width: "100%" }}>
-                        <InputLabel
-                          id="cuenta-select-label"
-                          style={{ color: "#a3a3a3" }}
-                        >
-                          Seleccione el número de cuenta...
+                        <InputLabel id="cuenta-select-label">
+                          Número de cuenta Origen
                         </InputLabel>
                         <Select
+                          className="textfield"
+                          fullWidth
+                          size="small"
+                          label="Número de cuenta Origen"
+                          //value={accountType}
+                          //onChange={(e) => setAccountType(e.target.value)}
+                          //error={accountTypeError}
                           style={{
                             backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
                             borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
                           }}
-                          labelId="cuenta-select-label"
-                          id="cuenta-select"
-                          label="Seleccione el número de cuenta..."
-                          size="small"
-                          className="textfield"
                         >
                           <MenuItem value={1}>Cuenta 1</MenuItem>
                           <MenuItem value={2}>Cuenta 2</MenuItem>
@@ -91,27 +89,22 @@ const Transfer = ({ theme }: any) => {
                       xs={12}
                       style={{ marginTop: "13px", marginBottom: "1rem" }}
                     >
-                      <Typography variant="subtitle1" textAlign={"start"}>
-                        <strong>Número de la cuenta destino</strong>
-                      </Typography>
-
                       <FormControl size="small" style={{ width: "100%" }}>
-                        <InputLabel
-                          id="cuenta-select-label"
-                          style={{ color: "#a3a3a3" }}
-                        >
-                          Seleccione el número de cuenta...
+                        <InputLabel id="cuenta-select-label">
+                          Número de cuenta Destino
                         </InputLabel>
                         <Select
+                          className="textfield"
+                          fullWidth
+                          size="small"
+                          label="Número de cuenta Destino"
+                          //value={accountType}
+                          //onChange={(e) => setAccountType(e.target.value)}
+                          //error={accountTypeError}
                           style={{
                             backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
                             borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
                           }}
-                          labelId="cuenta-select-label"
-                          id="cuenta-select"
-                          label="Seleccione el número de cuenta..."
-                          size="small"
-                          className="textfield"
                         >
                           <MenuItem value={1}>Cuenta 1</MenuItem>
                           <MenuItem value={2}>Cuenta 2</MenuItem>
@@ -120,65 +113,73 @@ const Transfer = ({ theme }: any) => {
                       </FormControl>
                     </Grid>
                     <Grid item xs={6} sm={5.2} md={4.2} lg={4.2}>
-                      <Typography variant="subtitle1" textAlign={"start"}>
-                        <strong>Fecha</strong>
-                      </Typography>
                       <TextField
-                        className="textfield"
+                        label="Fecha"
                         size="small"
-                        fullWidth
                         type="date"
-                        name="Fecha"
                         variant="outlined"
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
                         style={{
                           backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
                           borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
                         }}
                       />
                     </Grid>
-                    <Grid item xs={5} sm={4} md={4} lg={4}>
-                      <Typography variant="subtitle1" textAlign={"start"}>
-                        <strong>Monto</strong>
-                      </Typography>
-                      <TextField
-                        style={{
-                          backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                          borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                        }}
-                        className="textfield"
-                        size="small"
-                        fullWidth
-                        type="text"
-                        id="mtnefectivo"
-                        variant="outlined"
-                        placeholder="100.00"
-                        InputProps={{
-                          startAdornment: (
+                    <Grid
+                      item
+                      xs={5}
+                      sm={4}
+                      md={4}
+                      lg={4}
+                      marginLeft={isLargeScreen ? "2.5rem" : ""}
+                    >
+                      <FormControl size="small" style={{ width: "100%" }}>
+                        <InputLabel htmlFor="monto">Monto</InputLabel>
+                        <OutlinedInput
+                          id="monto"
+                          startAdornment={
                             <InputAdornment position="start">Q</InputAdornment>
-                          ),
-                        }}
-                      />
+                          }
+                          name="monto"
+                          label="Monto"
+                          size="small"
+                          placeholder="00.00"
+                          //value={values.cobros1}
+                          //onChange={handleChange}
+                          //onBlur={calcularResultado}
+                          //error={validation.cobros1.error}
+                          style={{
+                            backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                            borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                          }}
+                        />
+                      </FormControl>
                     </Grid>
                   </Grid>
                   <Grid style={{ marginTop: "2rem" }}>
-                    <Typography variant="subtitle1">
-                      <strong>Descripción</strong>
-                    </Typography>
-                    <TextareaAutosize
-                      className="textarea"
-                      minRows={3}
-                      maxRows={6}
-                      placeholder="Añadir descripción o comentario..."
-                      style={{
-                        padding: "12px",
-                        borderRadius: "12px",
-                        borderColor: "rgba(0, 0, 0, 0.23)",
-                        fontFamily: "Roboto",
-                        fontSize: "1rem",
-                        resize: "none",
-                        width: "100%",
-                      }}
-                    />
+                    <Tooltip
+                      title="Agregue una descripción o comentario"
+                      placement="top-start"
+                    >
+                      <TextField
+                        fullWidth
+                        multiline
+                        size="small"
+                        label="Descripción"
+                        variant="outlined"
+                        minRows={2}
+                        maxRows={6}
+                        //value={accountName}
+                        //onChange={(e) => setAccountName(e.target.value)}
+                        //error={accountNameError}
+                        style={{
+                          backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                          borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                        }}
+                      />
+                    </Tooltip>
                   </Grid>
                   <div style={{ textAlign: "center", marginTop: "2rem" }}>
                     <Button

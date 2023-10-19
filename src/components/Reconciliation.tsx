@@ -180,11 +180,9 @@ function BankReconciliation({ theme }: any) {
 
   useEffect(() => {
     setSelectedBank(dataService.selectedBank);
-    const unsubscribe = subscribeToSelectedBank(
-      (newSelectedBank) => {
-        setSelectedBank(newSelectedBank);
-      }
-    );
+    const unsubscribe = subscribeToSelectedBank((newSelectedBank) => {
+      setSelectedBank(newSelectedBank);
+    });
 
     return () => {
       unsubscribe();
@@ -222,9 +220,11 @@ function BankReconciliation({ theme }: any) {
           Conciliación Bancaria {selectedBank.name}
         </Typography>
       </div>
-      <Card>
+      <Card variant="outlined">
         <CardContent
-          sx={{ backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7" }}
+          sx={{
+            backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+          }}
         >
           <Grid
             container

@@ -8,7 +8,13 @@ import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
-import { MenuItem, Select, useMediaQuery, Tooltip } from "@mui/material";
+import {
+  MenuItem,
+  Select,
+  useMediaQuery,
+  Tooltip,
+  FormHelperText,
+} from "@mui/material";
 import Button from "@mui/material/Button";
 import UpdateIcon from "@mui/icons-material/Update";
 import SaveIcon from "@mui/icons-material/Save";
@@ -60,6 +66,7 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
   );
   const [email, setEmail] = useState(initialAccountInfo?.email || "");
 
+  //* Errores y validaciones
   const [accountNumberError, setAccountNumberError] = useState(false);
   const [accountNameError, setAccountNameError] = useState(false);
   const [accountTypeError, setAccountTypeError] = useState(false);
@@ -67,6 +74,55 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
   const [representativeError, setRepresentativeError] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [emailError, setEmailError] = useState(false);
+
+  const validKeysForNumber = [
+    // Estas son las teclas que se pueden usar en los inputs de tipo number
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "Backspace",
+    "ArrowLeft",
+    "ArrowRight",
+    "Tab",
+  ];
+
+  const numberInputOnWheelPreventChange = (
+    // Evita que el usuario cambie el valor del input con la rueda del mouse
+    e: React.WheelEvent<HTMLInputElement>
+  ) => {
+    const targetInput = e.target as HTMLInputElement;
+    targetInput.blur();
+    e.stopPropagation();
+    setTimeout(() => {
+      targetInput.focus();
+    }, 0);
+  };
+
+  const validateEmail = (email: string) => {
+    // Expresión regular para validar el formato del correo electrónico
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+    return emailPattern.test(email);
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+
+    // Validar el correo electrónico
+    if (!validateEmail(newEmail)) {
+      setEmailError(true);
+    } else {
+      setEmailError(false);
+    }
+  };
 
   const handleSubmit = () => {
     // Validar los campos aquí antes de enviar los datos
@@ -106,7 +162,7 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
       setPhoneNumberError(false);
     }
 
-    if (!email) {
+    if (!validateEmail(email)) {
       setEmailError(true);
     } else {
       setEmailError(false);
@@ -119,9 +175,8 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
       currency &&
       representative &&
       phoneNumber &&
-      email
+      validateEmail(email)
     ) {
-      // Puedes continuar con el envío de datos aquí
     }
   };
 
@@ -132,7 +187,8 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
         textAlign={"start"}
         color="textPrimary"
         gutterBottom
-        marginBottom={"3rem"}
+        marginBottom={"2rem"}
+        marginTop={"1rem"}
       >
         {type === "update" ? "Actualizar cuenta" : "Agregar cuenta"}
       </Typography>
@@ -147,7 +203,7 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
         }}
       >
         <Card
-          variant="outlined"
+        variant="outlined"
           style={{
             marginBottom: "16px",
             marginTop: "1rem",
@@ -155,7 +211,8 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
             width: isLargeScreen ? "50%" : "100%",
           }}
         >
-          <CardContent>
+          <CardContent
+          >
             <Typography
               variant="h6"
               color="textPrimary"
@@ -166,20 +223,49 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
               Información de la Cuenta
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={10} sm={5} md={4} lg={5} marginBottom="5px">
+              <Grid item xs={6} sm={5} md={4} lg={5} marginBottom="5px">
                 <Tooltip
                   title="Ingrese el número de cuenta"
                   placement="top-start"
                 >
                   <TextField
+                    className="noarrows"
                     fullWidth
                     size="small"
-                    label="Número de Cuenta"
+                    label="Número de cuenta"
                     variant="outlined"
                     type="number"
                     value={accountNumber}
-                    onChange={(e) => setAccountNumber(e.target.value)}
+                    onChange={(e) => {
+                      setAccountNumber(e.target.value);
+                      if (accountNumberError) {
+                        setAccountNumberError(false); // Establece el error en false cuando el campo se completa correctamente
+                      }
+                    }}
                     error={accountNumberError}
+                    FormHelperTextProps={{
+                      style: {
+                        backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+                        margin: 0,
+                        paddingLeft: "10",
+                        paddingRight: "10",
+                      },
+                    }}
+                    helperText={
+                      accountNumberError ? "*Numero de cuenta invalido" : null
+                    }
+                    InputProps={{
+                      inputProps: {
+                        min: 0, // Esto evita números negativos
+                      },
+                    }}
+                    onKeyDown={(e) => {
+                      // Evita que el usuario escriba letras en el input
+                      if (!validKeysForNumber.includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    onWheel={numberInputOnWheelPreventChange} // Evita que el usuario cambie el valor del input con la rueda del mouse
                     style={{
                       backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
                       borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
@@ -198,8 +284,26 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
                     label="Nombre de Cuenta"
                     variant="outlined"
                     value={accountName}
-                    onChange={(e) => setAccountName(e.target.value)}
+                    onChange={(e) => {
+                      setAccountName(e.target.value);
+                      if (accountNameError) {
+                        setAccountNameError(false);
+                      }
+                    }}
                     error={accountNameError}
+                    FormHelperTextProps={{
+                      style: {
+                        backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+                        margin: 0,
+                        paddingLeft: "10",
+                        paddingRight: "10",
+                      },
+                    }}
+                    helperText={
+                      accountNameError
+                        ? "*Se requiere el nombre de la cuenta"
+                        : null
+                    }
                     style={{
                       backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
                       borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
@@ -210,40 +314,84 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
               <Grid item xs={5} sm={5} md={3} lg={4.5}>
                 <FormControl fullWidth size="small" variant="outlined">
                   <InputLabel>Tipo de Cuenta</InputLabel>
-                  <Select
-                    size="small"
-                    value={accountType}
-                    onChange={(e) => setAccountType(e.target.value)}
-                    label="Tipo de Cuenta"
-                    error={accountTypeError}
-                    style={{
-                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                    }}
+                  <Tooltip
+                    placement="top-start"
+                    title="Seleccione un tipo de cuenta"
                   >
-                    <MenuItem value="Monetaria">Monetaria</MenuItem>
-                    <MenuItem value="Ahorro">Ahorro</MenuItem>
-                    <MenuItem value="Planilla">Planilla</MenuItem>
-                  </Select>
+                    <Select
+                      size="small"
+                      label="Tipo de Cuenta"
+                      value={accountType}
+                      onChange={(e) => {
+                        setAccountType(e.target.value);
+                        if (accountTypeError) {
+                          setAccountTypeError(false);
+                        }
+                      }}
+                      error={accountTypeError}
+                      style={{
+                        backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                        borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                      }}
+                    >
+                      <MenuItem value="Monetaria">Monetaria</MenuItem>
+                      <MenuItem value="Ahorro">Ahorro</MenuItem>
+                      <MenuItem value="Planilla">Planilla</MenuItem>
+                    </Select>
+                  </Tooltip>
+                  {accountTypeError && (
+                    <FormHelperText
+                      sx={{
+                        backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+                        color: "#f44336",
+                        margin: 0,
+
+                        paddingRight: 1,
+                      }}
+                    >
+                      *Seleccione un tipo de cuenta
+                    </FormHelperText>
+                  )}
                 </FormControl>
               </Grid>
               <Grid item xs={5} sm={5} md={2.5} lg={4}>
                 <FormControl fullWidth size="small" variant="outlined">
                   <InputLabel>Moneda</InputLabel>
-                  <Select
-                    size="small"
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
-                    label="Moneda"
-                    error={currencyError}
-                    style={{
-                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                    }}
+                  <Tooltip
+                    placement="top-start"
+                    title="Seleccione un tipo de moneda"
                   >
-                    <MenuItem value="Quetzales">Quetzales</MenuItem>
-                    <MenuItem value="Dólares">Dólares</MenuItem>
-                  </Select>
+                    <Select
+                      size="small"
+                      value={currency}
+                      label="Moneda"
+                      onChange={(e) => {
+                        setCurrency(e.target.value);
+                        if (currencyError) {
+                          setCurrencyError(false);
+                        }
+                      }}
+                      error={currencyError}
+                      style={{
+                        backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
+                        borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+                      }}
+                    >
+                      <MenuItem value="Quetzales">Quetzales</MenuItem>
+                      <MenuItem value="Dólares">Dólares</MenuItem>
+                    </Select>
+                  </Tooltip>
+                  {currencyError && (
+                    <FormHelperText
+                      sx={{
+                        backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+                        color: "#f44336",
+                        margin: 0,
+                      }}
+                    >
+                      *Seleccione un tipo de moneda
+                    </FormHelperText>
+                  )}
                 </FormControl>
               </Grid>
             </Grid>
@@ -269,17 +417,35 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={10} md={10} lg={12} marginBottom="5px">
                 <Tooltip
-                  title="Ingrese el nombre del titular"
+                  title="Ingrese el nombre completo del titular"
                   placement="top-start"
                 >
                   <TextField
                     fullWidth
                     size="small"
-                    label="Nombre completo"
+                    label="Nombre del titular"
                     variant="outlined"
                     value={representative}
-                    onChange={(e) => setRepresentative(e.target.value)}
+                    onChange={(e) => {
+                      setRepresentative(e.target.value);
+                      if (representativeError) {
+                        setRepresentativeError(false);
+                      }
+                    }}
                     error={representativeError}
+                    FormHelperTextProps={{
+                      style: {
+                        backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+                        margin: 0,
+                        paddingLeft: "10",
+                        paddingRight: "10",
+                      },
+                    }}
+                    helperText={
+                      representativeError
+                        ? "*Se requiere el nombre del titular"
+                        : null
+                    }
                     style={{
                       backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
                       borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
@@ -293,14 +459,43 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
                   placement="top-start"
                 >
                   <TextField
+                    className="textfield noarrows"
                     fullWidth
                     size="small"
                     label="Teléfono"
                     variant="outlined"
                     type="number"
                     value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    onChange={(e) => {
+                      setPhoneNumber(e.target.value);
+                      if (phoneNumberError) {
+                        setPhoneNumberError(false);
+                      }
+                    }}
                     error={phoneNumberError}
+                    FormHelperTextProps={{
+                      style: {
+                        backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+                        margin: 0,
+                      },
+                    }}
+                    helperText={
+                      phoneNumberError
+                        ? "*Ingrese el número de télefono del titular"
+                        : null
+                    }
+                    InputProps={{
+                      inputProps: {
+                        min: 0, // Esto evita números negativos
+                      },
+                    }}
+                    onKeyDown={(e) => {
+                      // Evita que el usuario escriba letras en el input
+                      if (!validKeysForNumber.includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    onWheel={numberInputOnWheelPreventChange} // Evita que el usuario cambie el valor del input con la rueda del mouse
                     style={{
                       backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
                       borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
@@ -320,8 +515,19 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
                     variant="outlined"
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
                     error={emailError}
+                    FormHelperTextProps={{
+                      style: {
+                        backgroundColor: isDarkMode ? "#1e1e1e" : "#f7f7f7",
+                        margin: 0,
+                      },
+                    }}
+                    helperText={
+                      emailError
+                        ? "*Dirección de correo electrónico invalida"
+                        : null
+                    }
                     style={{
                       backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
                       borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
