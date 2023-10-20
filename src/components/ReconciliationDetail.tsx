@@ -12,10 +12,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import { styled } from "@mui/material/styles";
 import { Button, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -23,24 +19,27 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Tooltip from "@mui/material/Tooltip";
 import FormHelperText from "@mui/material/FormHelperText";
 import { Check } from "@mui/icons-material";
+import ReconciliationService from "../services/Reconciliation.service";
+import { Reconciliation } from "../interfaces/Reconciliation.interface";
+import React from "react";
 
-const columns = ["fecha", "importe", "concepto", "conciliar"];
+const columns = ["fecha", "importe", "descripcion", "conciliar", "eliminar"];
 
 const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
-  const [conceptoOptions] = useState(["Opción 1", "Opción 2", "Opción 3"]);
   const isSmallScreen = useMediaQuery("(max-width: 1200px)");
 
   const columnWidths: any = {
     fecha: "13%",
     importe: "15%",
-    concepto: "20%",
-    conciliar: "20%",
+    descripcion: "30%",
+    conciliar: "10%",
+    eliminar: "10%",
   };
 
   const handleAddRow = () => {
     const newRow = {
       fecha: "",
-      concepto: "",
+      descripcion: "",
       importe: "",
       conciliar: false,
       isError: false,
@@ -59,13 +58,6 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
     updatedRows[rowIndex].conciliar = e.target.checked;
     setRows(updatedRows);
   };
-
-  const StyledSelect = styled(Select)({
-    width: "100%",
-    size: "small",
-    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-  });
 
   const StyledSmallTextField = styled(TextField)({
     width: "100%",
@@ -100,8 +92,8 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                     key={column}
                     style={{ width: columnWidths[column], textAlign: "center" }}
                   >
-                    {column === "concepto"
-                      ? "Concepto"
+                    {column === "descripcion"
+                      ? "Descripción"
                       : column.charAt(0).toUpperCase() + column.slice(1)}
                   </TableCell>
                 ))}
@@ -150,24 +142,23 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                                 error={row.isError}
                               />
                             </Tooltip>
-                          ) : column === "concepto" ? (
-                            <Tooltip title="Seleccione el concepto" arrow>
-                              <StyledSelect
-                                size="small"
+                          ) : column === "descripcion" ? (
+                            <Tooltip title="Descripción del importe" arrow>
+                             <StyledSmallTextField
                                 variant="outlined"
                                 fullWidth
+                                size="small"
+                                type="text"
+                                label="Descripción"
+                                InputLabelProps={{
+                                  shrink: true,
+                                }}
                                 value={row[column]}
                                 onChange={(e: any) =>
                                   handleInputChange(e, rowIndex, column)
                                 }
                                 error={row.isError}
-                              >
-                                {conceptoOptions.map((option) => (
-                                  <MenuItem key={option} value={option}>
-                                    {option}
-                                  </MenuItem>
-                                ))}
-                              </StyledSelect>
+                              />
                             </Tooltip>
                           ) : column === "conciliar" ? (
                             <Checkbox
@@ -221,24 +212,23 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
                                 error={row.isError}
                               />
                             </Tooltip>
-                          ) : column === "concepto" ? (
-                            <Tooltip title="Seleccione el concepto" arrow>
-                              <StyledSelect
+                          ) : column === "descripcion" ? (
+                            <Tooltip title="Descripción del importe" arrow>
+                               <StyledSmallTextField
                                 variant="outlined"
                                 fullWidth
                                 size="small"
+                                type="text"
+                                label="Descripción"
+                                InputLabelProps={{
+                                  shrink: true,
+                                }}
                                 value={row[column]}
                                 onChange={(e: any) =>
                                   handleInputChange(e, rowIndex, column)
                                 }
                                 error={row.isError}
-                              >
-                                {conceptoOptions.map((option) => (
-                                  <MenuItem key={option} value={option}>
-                                    {option}
-                                  </MenuItem>
-                                ))}
-                              </StyledSelect>
+                              />
                             </Tooltip>
                           ) : column === "conciliar" ? (
                             <Checkbox
@@ -271,28 +261,39 @@ const CustomTable = ({ title, rows, setRows, isDarkMode }: any) => {
 };
 
 const ReconciliationDetail = ({ theme }: any) => {
+  const isDarkMode: boolean = theme.palette.mode === "dark";
   const [table1Rows, setTable1Rows] = useState([]);
   const [table2Rows, setTable2Rows] = useState([]);
   const [table3Rows, setTable3Rows] = useState([]);
   const [table4Rows, setTable4Rows] = useState([]);
-  const isDarkMode: boolean = theme.palette.mode === "dark";
-  const isLargeScreen = useMediaQuery("(min-width: 1200px)");
-  const bankAmount = 1000;
-  const bookValues = 500;
+  const [reconciliation, setReconciliation] = useState<Reconciliation>();
+  const [conciliationPending, setConciliationPending] = useState<number>(0);
 
   const validateFields = () => {
-    // Validar si los campos están llenos
     let isValid = true;
     table1Rows.forEach((row: any) => {
       if (
         isFieldEmpty(row.fecha) ||
-        isFieldEmpty(row.concepto) ||
+        isFieldEmpty(row.descripcion) ||
         isFieldEmpty(row.importe)
       ) {
         isValid = false;
       }
     });
     return isValid;
+  };
+
+  React.useEffect(() => {
+    setReconciliation(ReconciliationService.getReconciliation());
+    setConciliationPending(ReconciliationService.getReconciliation().CON_DIFERENCIA);
+  }, []);
+
+  const formatCurrency = (value: any) => {
+    return new Intl.NumberFormat('es-GT', {
+      style: 'currency',
+      currency: 'GTQ',
+      minimumFractionDigits: 2,
+    }).format(value);
   };
 
   const isFieldEmpty = (value: string) => {
@@ -325,100 +326,8 @@ const ReconciliationDetail = ({ theme }: any) => {
           marginTop: "2rem",
         }}
       >
-        <CardContent sx={{padding: "2rem"}}>
-          {isLargeScreen ? (
-            <Grid container spacing={2} justifyContent="flex-end">
-              <Grid item xs={2}>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  size="small"
-                  type="date"
-                  label="Fecha Inicial"
-                  style={{
-                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-              <Grid item xs={2}>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  size="small"
-                  type="date"
-                  label="Fecha Final"
-                  style={{
-                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-              <Grid item xs={3} >
-                <FormControl size="small" variant="outlined" fullWidth>
-                  <InputLabel id="cuenta-label">
-                    Selecciona la cuenta
-                  </InputLabel>
-                  <Select
-                    size="small"
-                    labelId="cuenta-label"
-                    label="Selecciona la cuenta"
-                    style={{
-                      backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                      borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                    }}
-                  >
-                    <MenuItem value={"Cuenta 1"}>Cuenta 1</MenuItem>
-                    <MenuItem value={"Cuenta 2"}>Cuenta 2</MenuItem>
-                    <MenuItem value={"Cuenta 3"}>Cuenta 3</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-          ) : (
-            <Grid container spacing={2} justifyContent="center">
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  type="date"
-                  label="Fecha Inicial"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  type="date"
-                  label="Fecha Final"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl variant="outlined" fullWidth>
-                  <InputLabel id="cuenta-label">
-                    Selecciona la cuenta
-                  </InputLabel>
-                  <Select labelId="cuenta-label" label="Selecciona la cuenta">
-                    <MenuItem value={"Cuenta 1"}>Cuenta 1</MenuItem>
-                    <MenuItem value={"Cuenta 2"}>Cuenta 2</MenuItem>
-                    <MenuItem value={"Cuenta 3"}>Cuenta 3</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-          )}
+        <CardContent sx={{ padding: "2rem" }}>
+
           <Grid
             container
             spacing={2}
@@ -431,12 +340,12 @@ const ReconciliationDetail = ({ theme }: any) => {
           >
             <Grid item xs={3}>
               <Typography variant="body1" gutterBottom>
-                Saldo según banco:
+                Saldo a Conciliar:
               </Typography>
             </Grid>
             <Grid item xs={3}>
               <Typography variant="body1" gutterBottom>
-              Q. {bankAmount}
+                {formatCurrency(conciliationPending)}
               </Typography>
             </Grid>
           </Grid>
@@ -489,12 +398,12 @@ const ReconciliationDetail = ({ theme }: any) => {
           >
             <Grid item xs={3}>
               <Typography variant="body1" gutterBottom>
-                Saldos según libros:
+                Saldos faltante de conciliar:
               </Typography>
             </Grid>
             <Grid item xs={3}>
               <Typography variant="body1" gutterBottom>
-               Q.  {bookValues}
+                {formatCurrency(reconciliation?.CON_DIFERENCIA)}
               </Typography>
             </Grid>
           </Grid>

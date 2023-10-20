@@ -230,7 +230,7 @@ function BankReconciliation({ theme }: any) {
       CON_EGRESOS_BANCO: bankPayments,
       CON_INGRESOS_SISTEMA: systemCharge,
       CON_EGRESOS_SISTEMA: systemPayments,
-      CON_DIFERENCIA: systemResult - bankResult,
+      CON_DIFERENCIA: bankResult +- systemResult,
       cnt_cuenta: selectedAccount || 0
     })
     handleRedirect("reconciliation/detail");
