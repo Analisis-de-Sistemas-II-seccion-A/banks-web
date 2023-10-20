@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import TextField from "@mui/material/TextField";
@@ -14,59 +14,71 @@ import {
   useMediaQuery,
   Tooltip,
   FormHelperText,
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import UpdateIcon from "@mui/icons-material/Update";
 import SaveIcon from "@mui/icons-material/Save";
-import bam from "../assets/bam.jpg";
+import AccountService from "../services/Account.service";
+import { Account } from "../interfaces/Account.interface";
+import React from "react";
+import { Add, ArrowBack, Wallet } from "@mui/icons-material";
+import CatalogService from "../services/Catalog.service";
+import { AccountType } from "../interfaces/AccountType.interface";
+import { Currency } from "../interfaces/Currency.interface";
+import { Bank } from "../interfaces/Bank.interface";
+import BankService, { subscribeToSelectedBank } from "../services/Bank.service";
 
 const CreateOrUpdateAccount = ({ theme }: any) => {
   const { type } = useParams();
+  const navigate = useNavigate();
   const isLargeScreen = useMediaQuery("(min-width: 1200px)");
   const isDarkMode: boolean = theme.palette.mode === "dark";
+  const [accountToUpdate] = useState<Account>(AccountService.selectedAccount());
 
-  const initialAccountInfo =
-    type === "update"
-      ? {
-          accountNumber: "123456789",
-          accountName: "Cuenta Monetaria BAM",
-          accountType: "Monetaria",
-          currency: "Quetzales",
-          image: bam,
-          representative: "Juan Pérez",
-          phoneNumber: "12345678",
-          email: "ejuarezh5@miumg.edu.gt",
-        }
-      : {
-          accountNumber: "",
-          accountName: "",
-          accountType: "",
-          currency: "",
-          image: "",
-          representative: "",
-          phoneNumber: "",
-          email: "",
-        };
+  if (type === "update" && !accountToUpdate) {
+    return <Box sx={{minHeight: '100vh'}}>
+      <div>
+        No hay ninguna cuenta para actualizar :(
+      </div>
+      <div>
+        ¿Desea crear una nueva o ir al listado de cuentas?
+        <div >
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("/accounts/create")}
+          startIcon={<Add />}
+        >
+          Nueva Cuenta
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("")}
+          startIcon={<Wallet />}
+        >
+          Ir al Listado
+        </Button>
+        </div>
+      </div>
+    </Box>
+  }
 
-  const [accountNumber, setAccountNumber] = useState(
-    initialAccountInfo?.accountNumber || ""
-  );
-  const [accountName, setAccountName] = useState(
-    initialAccountInfo?.accountName || ""
-  );
-  const [accountType, setAccountType] = useState(
-    initialAccountInfo?.accountType || ""
-  );
-  const [currency, setCurrency] = useState(initialAccountInfo?.currency || "");
-  const [representative, setRepresentative] = useState(
-    initialAccountInfo?.representative || ""
-  );
-  const [phoneNumber, setPhoneNumber] = useState(
-    initialAccountInfo?.phoneNumber || ""
-  );
-  const [email, setEmail] = useState(initialAccountInfo?.email || "");
+  
+  const [accountNumber, setAccountNumber] = useState<number | null>(type === "update" ? accountToUpdate.CNT_NUMERO_CUENTA : null);
+  const [accountName, setAccountName] = useState<string>(type === "update" ? accountToUpdate.CNT_NOMBRE : "");
+  const [accountType, setAccountType] = useState<number | null>(type === "update" ? accountToUpdate.TCN_TIPO_CUENTA : null);
+  const [currency, setCurrency] = useState<number | null>(type === "update" ? accountToUpdate.MND_MONEDA : null);
+  const [representative, setRepresentative] = useState<string>(type === "update" ? accountToUpdate.CNT_TITULAR : "");
+  const [phoneNumber, setPhoneNumber] = useState<number | null>(type === "update" ? accountToUpdate.CNT_TELEFONO : null);
+  const [email, setEmail] = useState<string>(type === "update" ? accountToUpdate.CNT_CORREO : "");
 
-  //* Errores y validaciones
   const [accountNumberError, setAccountNumberError] = useState(false);
   const [accountNameError, setAccountNameError] = useState(false);
   const [accountTypeError, setAccountTypeError] = useState(false);
@@ -76,7 +88,7 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
   const [emailError, setEmailError] = useState(false);
 
   const validKeysForNumber = [
-    // Estas son las teclas que se pueden usar en los inputs de tipo number
+
     "0",
     "1",
     "2",
@@ -93,8 +105,40 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
     "Tab",
   ];
 
+  const [accountTypes, setAccountTypes] = useState<AccountType[]>([]);
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    setSelectedBank(BankService.selectedBank);
+    const unsubscribe = subscribeToSelectedBank(
+      (newSelectedBank: any) => {
+        setSelectedBank(newSelectedBank);
+      }
+    );
+    return () => {
+      unsubscribe();
+    };
+  }, []); 
+  
+  useEffect(() => {
+
+      CatalogService.getAccountTypes().then((data) => {
+        setAccountTypes(data);
+      });
+
+      CatalogService.getCurrencies().then((data) => {
+        setCurrencies(data);
+      });
+    
+  }, []);
+
   const numberInputOnWheelPreventChange = (
-    // Evita que el usuario cambie el valor del input con la rueda del mouse
     e: React.WheelEvent<HTMLInputElement>
   ) => {
     const targetInput = e.target as HTMLInputElement;
@@ -106,7 +150,6 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
   };
 
   const validateEmail = (email: string) => {
-    // Expresión regular para validar el formato del correo electrónico
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
     return emailPattern.test(email);
@@ -116,7 +159,6 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
     const newEmail = e.target.value;
     setEmail(newEmail);
 
-    // Validar el correo electrónico
     if (!validateEmail(newEmail)) {
       setEmailError(true);
     } else {
@@ -125,7 +167,6 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
   };
 
   const handleSubmit = () => {
-    // Validar los campos aquí antes de enviar los datos
     if (!accountNumber) {
       setAccountNumberError(true);
     } else {
@@ -177,11 +218,63 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
       phoneNumber &&
       validateEmail(email)
     ) {
+     setOpen(true);
     }
   };
 
+  const handleExecuteAction = () => {
+    if(type === "update") {
+      AccountService.updateAccount({
+        CNT_CUENTA: accountToUpdate.CNT_CUENTA,
+        CNT_NUMERO_CUENTA: accountNumber,
+        CNT_NOMBRE: accountName,
+        TCN_TIPO_CUENTA: accountType,
+        MND_MONEDA: currency,
+        CNT_TITULAR: representative,
+        CNT_TELEFONO: phoneNumber,
+        CNT_CORREO: email,
+      } as Account).then((data) => {
+        AccountService.deleteSelectedAccount();
+        navigate(`/accounts/${data.CNT_CUENTA}/detail`);
+      });
+    } else {
+      AccountService.createAccount({
+        CNT_NUMERO_CUENTA: accountNumber,
+        CNT_NOMBRE: accountName,
+        TCN_TIPO_CUENTA: accountType,
+        MND_MONEDA: currency,
+        CNT_TITULAR: representative,
+        CNT_TELEFONO: phoneNumber,
+        CNT_CORREO: email,
+        BNC_BANCO: selectedBank?.BNC_BANCO,
+        CNT_ESTADO: true
+      } as Account).then((data) => {
+        navigate(`/accounts/${data.CNT_CUENTA}/detail`);
+      });
+    }
+  }
+
   return (
     <Container maxWidth="lg">
+        <Dialog
+        open={open}
+        onClose={handleClose}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Confirmación"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+           { "Confirma que los datos son correctos y que quiere " + (type === "update" ? "actualizar" : "crear") + " la cuenta?"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={()=> handleExecuteAction()} autoFocus>
+            Aceptar
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Typography
         variant="h4"
         textAlign={"start"}
@@ -237,10 +330,10 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
                     type="number"
                     value={accountNumber}
                     onChange={(e) => {
-                      setAccountNumber(e.target.value);
+                      setAccountNumber(parseInt(e.target.value));
                       if (accountNumberError) {
-                        setAccountNumberError(false); // Establece el error en false cuando el campo se completa correctamente
-                      }
+                        setAccountNumberError(false); 
+                           }
                     }}
                     error={accountNumberError}
                     FormHelperTextProps={{
@@ -256,17 +349,16 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
                     }
                     InputProps={{
                       inputProps: {
-                        min: 0, // Esto evita números negativos
+                        min: 0, 
                       },
                     }}
                     onKeyDown={(e) => {
-                      // Evita que el usuario escriba letras en el input
                       if (!validKeysForNumber.includes(e.key)) {
                         e.preventDefault();
                       }
                     }}
-                    onWheel={numberInputOnWheelPreventChange} // Evita que el usuario cambie el valor del input con la rueda del mouse
-                    style={{
+                    onWheel={numberInputOnWheelPreventChange} 
+                        style={{
                       backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
                       borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
                     }}
@@ -323,7 +415,7 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
                       label="Tipo de Cuenta"
                       value={accountType}
                       onChange={(e) => {
-                        setAccountType(e.target.value);
+                        setAccountType(e.target.value as number);
                         if (accountTypeError) {
                           setAccountTypeError(false);
                         }
@@ -334,9 +426,13 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
                         borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
                       }}
                     >
-                      <MenuItem value="Monetaria">Monetaria</MenuItem>
-                      <MenuItem value="Ahorro">Ahorro</MenuItem>
-                      <MenuItem value="Planilla">Planilla</MenuItem>
+                        {accountTypes.map((accountType) => (
+                        <MenuItem
+                          key={accountType.TCN_TIPO_CUENTA}
+                          value={accountType.TCN_TIPO_CUENTA}>
+                          {accountType.TCN_NOMBRE}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Tooltip>
                   {accountTypeError && (
@@ -366,7 +462,7 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
                       value={currency}
                       label="Moneda"
                       onChange={(e) => {
-                        setCurrency(e.target.value);
+                        setCurrency(e.target.value as number);
                         if (currencyError) {
                           setCurrencyError(false);
                         }
@@ -377,8 +473,14 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
                         borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
                       }}
                     >
-                      <MenuItem value="Quetzales">Quetzales</MenuItem>
-                      <MenuItem value="Dólares">Dólares</MenuItem>
+                      {currencies.map((currency) => (
+                        <MenuItem
+                          key={currency.MND_MONEDA}
+                          value={currency.MND_MONEDA}
+                        >
+                          {currency.MND_DESCRIPCION}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Tooltip>
                   {currencyError && (
@@ -467,7 +569,7 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
                     type="number"
                     value={phoneNumber}
                     onChange={(e) => {
-                      setPhoneNumber(e.target.value);
+                      setPhoneNumber(parseInt(e.target.value));
                       if (phoneNumberError) {
                         setPhoneNumberError(false);
                       }
@@ -539,9 +641,9 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
           </CardContent>
           <div
             style={{
-              display: "flex",
+              display: "grid",
               justifyContent: "center",
-              marginTop: "16px",
+              marginTop: "1rem",
               marginBottom: "2rem",
             }}
           >
@@ -553,6 +655,18 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
               onClick={handleSubmit}
             >
               {type === "update" ? "Actualizar" : "Guardar"}
+            </Button>
+            <div style={{height:'1rem'}}>
+
+            </div>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              startIcon={ <ArrowBack />}
+              onClick={type === "create" ? () => navigate("/") : () => navigate(`/accounts/${accountToUpdate.CNT_CUENTA}/detail`)}
+            >
+              {"Regresar"}
             </Button>
           </div>
         </Card>

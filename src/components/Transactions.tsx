@@ -17,89 +17,33 @@ import { useNavigate } from "react-router-dom";
 import bi from "../assets/bi.jpg";
 import banrural from "../assets/banrural.png";
 import bam from "../assets/bam.jpg";
+import BankService from "../services/Bank.service";
+import TransactionService from "../services/Transaction.service";
+import { TransactionHistory } from "../interfaces/TransactionHistory.interface";
+import { Account } from "../interfaces/Account.interface";
+import CatalogService from "../services/Catalog.service";
+import { Currency } from "../interfaces/Currency.interface";
 
 const Transactions = ({ theme }: any) => {
   const navigate = useNavigate();
+  const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
+  const isDarkMode: boolean = theme.palette.mode === "dark";
+  const isLargeScreen = useMediaQuery("(min-width: 1200px)");
+  const [transactions, setTransactions] = useState<TransactionHistory[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
+
   const handleRedirect = (route: string) => {
     navigate(`/${route}`);
   };
 
-  const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
-  const isDarkMode: boolean = theme.palette.mode === "dark";
-  const isLargeScreen = useMediaQuery("(min-width: 1200px)");
-
-  const columns:  GridColDef[] = [
-    {
-      field: "fecha",
-      headerName: "Fecha",
-      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
-      width: 200,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "monto",
-      headerName: "Monto",
-      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
-      width: 200,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "tipo",
-      headerName: "Tipo",
-      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
-      width: 200,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "descripcion",
-      headerName: "Descripción",
-      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
-      width: 258,
-      headerAlign: "center",
-      align: "center",
-    },
-  ];
-
-  const rows = [
-    {
-      id: 1,
-      fecha: "15/04/2023",
-      monto: "Q. 300.00",
-      tipo: "Ingreso",
-      descripcion: "Venta de productos",
-    },
-    {
-      id: 2,
-      fecha: "14/04/2023",
-      monto: "Q. 400.00",
-      tipo: "Egreso",
-      descripcion: "Pago de nómina",
-    },
-    {
-      id: 3,
-      fecha: "12/04/2023",
-      monto: "Q. 150.00",
-      tipo: "Transferencia",
-      descripcion: "Transferencia de fondos",
-    },
-    {
-      id: 4,
-      fecha: "10/04/2023",
-      monto: "Q. 50.00",
-      tipo: "Egreso",
-      descripcion: "Pago de factura de servicios",
-    },
-    {
-      id: 5,
-      fecha: "08/04/2023",
-      monto: "Q. 500.00",
-      tipo: "Ingreso",
-      descripcion: "Depósito de clientes",
-    },
-  ];
+  const formatCurrency = (ammount: number, currency: number) => {
+    const actualCurrency: Currency | null = currencies.find((moned) => moned.MND_MONEDA === currency) || null;
+    return new Intl.NumberFormat(actualCurrency?.MND_ABREVIATURA === "GTQ" ? "es-GT" : "en-US", {
+      style: "currency",
+      currency: actualCurrency?.MND_ABREVIATURA || "GTQ",
+    }).format(ammount);
+  };
 
   useEffect(() => {
     setSelectedBank(dataService.selectedBank);
@@ -108,17 +52,82 @@ const Transactions = ({ theme }: any) => {
         setSelectedBank(newSelectedBank);
       }
     );
-
     return () => {
       unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (selectedBank) {
+      BankService.getAccounts(selectedBank?.BNC_BANCO || 0).then(async (accounttins) => {
+        setAccounts(accounttins);
+        await CatalogService.getCurrencies().then((currencies) => {
+          setCurrencies(currencies);
+        });
+
+        let accountList: number[] = [];
+        accounttins.forEach((account) => {
+          accountList.push(account.CNT_CUENTA);
+        });
+        if (accountList.length > 0) {
+          TransactionService.getLastestTransations(accountList).then((transactions) => {
+            setTransactions(transactions);
+          });
+        }
+      });
+    }
+  }, [selectedBank]); 
 
   const obtenerImagen = (nombreImagen: string) => {
     if (nombreImagen === 'bi') return bi;
     if (nombreImagen === 'banrural') return banrural;
     if (nombreImagen === 'bam') return bam;
   }
+
+  const columns:  GridColDef[] = [
+    {
+      field: "fecha",
+      headerName: "Fecha",
+      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
+      width: 100,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "monto",
+      headerName: "Monto",
+      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
+      width: 100,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "descripcion",
+      headerName: "Descripción",
+      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
+      width: 358,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "account",
+      headerName: "Cuenta",
+      headerClassName: isDarkMode ? "dark-column-header" : "column-header",
+      width: 300,
+      headerAlign: "center",
+      align: "center",
+    },
+  ];
+  
+  const rows = transactions.map((transaction) => {
+    return {
+      id: transaction.dbid,
+      fecha: transaction.fecha,
+      monto: formatCurrency(transaction.monto_transaccion, accounts.find((account) => account.CNT_CUENTA === transaction.cuenta)?.MND_MONEDA || 0),
+      descripcion: transaction.descripcion,
+      account: accounts.find((account) => account.CNT_CUENTA === transaction.cuenta)?.CNT_NOMBRE,
+    };
+  });
 
   if (!selectedBank) {
     return (

@@ -93,7 +93,7 @@ function App() {
                 element={<Transactions theme={theme} />}
               />
               <Route
-                path={`/reports/detail`}
+                path={`/reports/:type`}
                 element={<ReportsDetail theme={theme} />}
               />
               <Route

@@ -4,8 +4,15 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import {
+  Alert,
   Button,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
   ListItemIcon,
   MenuItem,
   useMediaQuery,
@@ -31,6 +38,7 @@ import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
 import { DateTime } from "luxon";
 import TransactionService from "../services/Transaction.service";
 import { TransactionHistory } from "../interfaces/TransactionHistory.interface";
+import { Close } from "@mui/icons-material";
 
 const styles = {
   button: {
@@ -56,13 +64,24 @@ const AccountDetail = ({ theme }: any) => {
   const [banks, setBanks] = React.useState<Bank[]>([]);
   const [value, setValue] = React.useState<DateRange<DateTime>>([null, null]);
   const [transactionHistory, setTransactionHistory] = React.useState<TransactionHistory[]>([]);
+  const [showError, setShowError] = React.useState<boolean>(false);
+  const [open, setOpen] = React.useState(false);
 
   const handleRedirect = (route: string) => {
     navigate(`/${route}`);
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleUpdateAccount = () => {
+    handleRedirect("accounts/update");
+    AccountService.selectAccount(selectedAccount as Account);
+  }
+
   const formatCurrency = (ammount: number, currency: string) => {
-    return new Intl.NumberFormat(currency === "GTQ" ? "es-GT" : "", {
+    return new Intl.NumberFormat(currency === "GTQ" ? "es-GT" : "en-US", {
       style: "currency",
       currency: currency,
     }).format(ammount);
@@ -74,12 +93,18 @@ const AccountDetail = ({ theme }: any) => {
     if (nombreImagen === 'bam') return bam;
   }
 
-  const handleChangeDates = async (newValue: DateRange<DateTime>) => {
-    setValue(newValue);
-    await TransactionService.getTransactionHistoryByDate(newValue[0]?.toISODate() || "", newValue[1]?.toISODate() || "").then((data) => {
-      setTransactionHistory(data);
+  const handleDeleteAccount = async (account: number) => {
+    await AccountService.deleteAccount(account).then((data) => {
+      if(data.deleted) {
+        setShowError(false);
+        setOpen(false);
+        handleRedirect("");
+      } else {
+        setOpen(false);
+        setShowError(true);
+      }
     });
-  }
+  };
 
   useEffect(() => {
     if (account) {
@@ -96,6 +121,9 @@ const AccountDetail = ({ theme }: any) => {
       });
 
       AccountService.getAccountByid(parseInt(account)).then((data) => {
+        if(!data) {
+          handleRedirect("");
+        }
         setSelectedAccount(data);
       });
     }
@@ -168,7 +196,7 @@ const AccountDetail = ({ theme }: any) => {
 
   if (!selectedAccount) {
     return (
-      <div style={{ marginBottom: "25rem" }}>No se encontró el banco.</div>
+      <div style={{ marginBottom: "25rem" }}>No se encontró la cuenta.</div>
     );
   }
 
@@ -177,6 +205,26 @@ const AccountDetail = ({ theme }: any) => {
       maxWidth="lg"
       style={{ marginBottom: isLargeScreen ? "10rem" : "20rem" }}
     >
+       <Dialog
+        open={open}
+        onClose={handleClose}
+      >
+        <DialogTitle id="alert-dialog-title">
+          La Cuenta se eliminará
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Al hacer click en aceptar la cuenta se eliminará completamente,
+             lo que significa que no podrá ver su información ni crear nuevas transacciones en la cuenta
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={()=> handleDeleteAccount(selectedAccount.CNT_CUENTA)} autoFocus>
+            Aceptar
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Card>
         <CardContent
           style={{
@@ -245,23 +293,45 @@ const AccountDetail = ({ theme }: any) => {
                   style={{ marginBottom: "1rem", width: "100%" }}
                   startIcon={<EditIcon />}
                   size="large"
-                  onClick={() => handleRedirect("accounts/update")}
+                  onClick={handleUpdateAccount}
                 >
                   Editar
                 </Button>
                 <Button
                   variant="contained"
                   startIcon={<DeleteIcon />}
+                  onClick={() => setOpen(true)}
                   size="large"
                   style={{ width: "100%" }}
                   sx={styles.button}
                 >
                   Desactivar
                 </Button>
+
+                
               </div>
+              
             </Grid>
+            
           </Grid>
+          
         </CardContent>
+       { showError && (
+        <div style={{alignItems: 'center', display: 'flex', justifyContent: 'center'}}>
+         <Alert severity="error"    action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setShowError(false);
+              }}
+            >
+              <Close fontSize="inherit" />
+            </IconButton>
+          }>Ocurrió un error al eliminar la cuenta</Alert>
+        </div>)
+          }
         <CardContent style={{ display: "flex", alignItems: "center" }}>
           <Grid
             container
@@ -324,7 +394,10 @@ const AccountDetail = ({ theme }: any) => {
               <DateRangePicker
                 value={value}
                 maxDate={DateTime.now()}
-                onAccept={(newValue) => handleChangeDates(newValue)}
+                onAccept={async (newValue) => { setValue(newValue)
+                  await TransactionService.getTransactionHistoryByDate(selectedAccount?.CNT_CUENTA || 0,newValue[0]?.toISODate() || "", newValue[1]?.toISODate() || "").then((data) => {
+                    setTransactionHistory(data)
+                  })}}
               />
                 </LocalizationProvider>
             </div>

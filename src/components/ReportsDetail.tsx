@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -8,7 +8,8 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
+import { DateTime } from "luxon";
 import {
   Container,
   useMediaQuery,
@@ -18,16 +19,57 @@ import {
   Button,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
+import { Bank } from "../interfaces/Bank.interface";
+import { Account } from "../interfaces/Account.interface";
+import { DateRange, DateRangePicker, LocalizationProvider } from "@mui/x-date-pickers-pro";
+import BankService from "../services/Bank.service";
+import { useParams } from "react-router-dom";
+import reportService from "../services/Report.service";
 
 function ReportsDetail({ theme }: any) {
-  const isLargeScreen = useMediaQuery("(min-width: 600px)");
-  const [formatoDocumento, setFormatoDocumento] = useState("csv");
+  const isLargeScreen = useMediaQuery("(min-width: 600px");
+  const { type } = useParams();
   const isDarkMode: boolean = theme.palette.mode === "dark";
+  const [banks, setBanks] = useState<Bank[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [value, setValue] = React.useState<DateRange<DateTime>>([null, null]);
+  const [selectedBank, setSelectedBank] = useState<number | undefined>();
+  const [selectedAccount, setSelectedAccount] = useState<number | undefined>();
+  const [isBankValid, setIsBankValid] = useState(true);
+  const [isAccountValid, setIsAccountValid] = useState(true);
+  const [isDateRangeValid, setIsDateRangeValid] = useState(true);
+  console.log(isDateRangeValid);
 
-  const handleFormatoDocumentoChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormatoDocumento((event.target as HTMLInputElement).value);
+  useEffect(() => {
+    BankService.getBanks().then((response) => {
+      setBanks(response);
+    });
+  }, []);
+
+  const handleBankChange = async (event: number) => {
+    await BankService.getAccounts(event).then((response) => {
+      setAccounts(response);
+    });
+  };
+
+  const handleGenerateReport = () => {
+    if (!selectedBank) {
+      setIsBankValid(false);
+    }
+    if (!selectedAccount) {
+      setIsAccountValid(false);
+    }
+    if (!value[0] || !value[1]) {
+      setIsDateRangeValid(false);
+    }
+
+    if (selectedBank && selectedAccount && value[0] && value[1]) {
+      reportService.generateReport(type || "", {
+        id: selectedAccount,
+        initDate: value[0].toISODate() || "",
+        finalDate: value[1].toISODate() || "",
+      });
+    }
   };
 
   return (
@@ -68,102 +110,85 @@ function ReportsDetail({ theme }: any) {
                 marginTop: "2rem",
               }}
             >
-              <FormControl size="small" sx={{ m: 1, minWidth: 200 }}>
-                <InputLabel id="bancos-label">Seleccione Banco</InputLabel>
+              <FormControl
+                size="small"
+                sx={{ m: 1, minWidth: 300 }}
+                error={!isBankValid}
+              >
+                <InputLabel id="bancos-label">Seleccione un Banco</InputLabel>
                 <Select
                   labelId="bancos-label"
                   id="bancos-select"
                   label="Seleccione Banco"
                   size="small"
+                  onChange={(event) => {
+                    setSelectedBank(event.target.value as number);
+                    setIsBankValid(true);
+                    handleBankChange(event.target.value as number);
+                  }}
                   style={{
                     backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
                     borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
                   }}
                 >
-                  <MenuItem value={1}>Banco Industrial</MenuItem>
-                  <MenuItem value={2}>Banco Banrural</MenuItem>
-                  <MenuItem value={3}>Banco Agromercantil</MenuItem>
+                  {banks.map((bank: Bank) => (
+                    <MenuItem value={bank.BNC_BANCO}>{bank.BNC_NOMBRE}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
-              <FormControl size="small" sx={{ m: 1, minWidth: 280 }}>
-                <InputLabel id="cuentas-label">Cuentas</InputLabel>
+              <FormControl
+                size="small"
+                sx={{ m: 1, minWidth: 300 }}
+                error={!isAccountValid}
+              >
+                <InputLabel id="cuentas-label">Seleccione una Cuenta</InputLabel>
                 <Select
                   labelId="cuentas-label"
                   id="cuentas-select"
                   label="Cuentas"
                   size="small"
+                  onChange={(event) => {
+                    setSelectedAccount(event.target.value as number);
+                    setIsAccountValid(true);
+                  }}
                   style={{
                     backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
                     borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
                   }}
                 >
-                  <MenuItem value={1}>Cuenta No. 0000000001</MenuItem>
-                  <MenuItem value={2}>Cuenta No. 0000000002</MenuItem>
-                  <MenuItem value={3}>Cuenta No. 0000000003</MenuItem>
+                  {accounts.map((account: Account) => (
+                    <MenuItem value={account.CNT_CUENTA}>{account.CNT_NOMBRE}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
-
-              <FormControl size="small" sx={{ m: 0.5, minWidth: 140 }}>
-                <InputLabel id="categorias-label">Categorías</InputLabel>
-                <Select
-                  labelId="categorias-label"
-                  id="categorias-select"
-                  label="Categorías"
-                  size="small"
-                  style={{
-                    backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                    borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
+            </div>
+            <Grid xs={12}>
+              <Typography
+                variant="body1"
+                component="div"
+                sx={{ marginBottom: "0.5rem" }}
+              >
+                Elige el rango de fechas del reporte
+              </Typography>
+            </Grid>
+            <Grid sx={{ marginTop: "1rem" }}>
+              <LocalizationProvider dateAdapter={AdapterLuxon}>
+                <DateRangePicker
+                  value={value}
+                  maxDate={DateTime.now()}
+                  onAccept={(newValue) => {
+                    setValue(newValue as DateRange<DateTime>);
+                    setIsDateRangeValid(true);
                   }}
-                >
-                  <MenuItem value={1}>Categoría 1</MenuItem>
-                  <MenuItem value={2}>Categoría 2</MenuItem>
-                  <MenuItem value={3}>Categoría 3</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
+                />
+              </LocalizationProvider>
+            </Grid>
             <div
               style={{
                 display: isLargeScreen ? "flex" : "grid",
                 alignItems: "center",
                 justifyContent: "center",
-                marginBottom: "2rem",
-              }}
-            >
-              <TextField
-                id="fecha-inicio"
-                label="Fecha de Inicio"
-                type="date"
-                size="small"
-                sx={{ m: 1, minWidth: 120 }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                style={{
-                  backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                  borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                }}
-              />
-              <TextField
-                id="fecha-fin"
-                label="Fecha de Fin"
-                type="date"
-                size="small"
-                sx={{ m: 1, minWidth: 120 }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                style={{
-                  backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                  borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                }}
-              />
-            </div>
-            {/* Tercer div con radio buttons */}
-            <div
-              style={{
-                display: isLargeScreen ? "flex" : "grid",
-                alignItems: "center",
-                justifyContent: "center",
+                marginTop: "2rem",
               }}
             >
               <FormControl component="fieldset">
@@ -172,36 +197,22 @@ function ReportsDetail({ theme }: any) {
                   component="div"
                   sx={{ marginBottom: "0.5rem" }}
                 >
-                  Selecciona el formato del documento
+                  Elige el formato del documento
                 </Typography>
-                <RadioGroup
-                  aria-label="formato-documento"
-                  name="formato-documento"
-                  value={formatoDocumento}
-                  onChange={handleFormatoDocumentoChange}
-                  row
-                >
-                  <FormControlLabel
-                    value="csv"
-                    control={<Radio />}
-                    label="CSV"
-                  />
-                  <FormControlLabel
-                    value="xlsx"
-                    control={<Radio />}
-                    label="XLSX"
-                  />
-                  <FormControlLabel
-                    value="pdf"
-                    control={<Radio />}
-                    label="PDF"
-                  />
-                  <FormControlLabel
-                    value="txt"
-                    control={<Radio />}
-                    label="TXT"
-                  />
-                </RadioGroup>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <RadioGroup
+                    aria-label="formato-documento"
+                    name="formato-documento"
+                    row
+                  >
+                    <FormControlLabel
+                      value="pdf"
+                      control={<Radio />}
+                      checked={true}
+                      label="PDF"
+                    />
+                  </RadioGroup>
+                </div>
               </FormControl>
             </div>
             <div
@@ -218,6 +229,7 @@ function ReportsDetail({ theme }: any) {
                 color="primary"
                 size="large"
                 startIcon={<DownloadIcon />}
+                onClick={handleGenerateReport}
               >
                 Descargar Reporte
               </Button>
