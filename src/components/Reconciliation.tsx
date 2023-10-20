@@ -54,7 +54,7 @@ function BankReconciliation({ theme }: any) {
     },
     {
       field: "pagosRealizados1",
-      headerName: "Pagos Realizados",
+      headerName: "Pagos Realizados (EB)",
       width: 200,
       type: "number",
       align: "center",
@@ -63,7 +63,7 @@ function BankReconciliation({ theme }: any) {
     },
     {
       field: "cobrosRealizados1",
-      headerName: "Cobros Realizados",
+      headerName: "Cobros Realizados (EB)",
       width: 200,
       type: "number",
       align: "center",
@@ -72,7 +72,7 @@ function BankReconciliation({ theme }: any) {
     },
     {
       field: "pagosRealizados2",
-      headerName: "Pagos Realizados",
+      headerName: "Pagos Realizados (AUX)",
       width: 200,
       type: "number",
       align: "center",
@@ -81,7 +81,7 @@ function BankReconciliation({ theme }: any) {
     },
     {
       field: "cobrosRealizados2",
-      headerName: "Cobros Realizados",
+      headerName: "Cobros Realizados (AUX)",
       width: 200,
       type: "number",
       align: "center",
@@ -246,7 +246,7 @@ function BankReconciliation({ theme }: any) {
               justifyContent="center"
             >
               <Typography variant="h6" gutterBottom>
-                Según Extracto Bancario
+                Según Extracto Bancario (EB)
               </Typography>
 
               <Grid
@@ -359,7 +359,7 @@ function BankReconciliation({ theme }: any) {
               justifyContent="center"
             >
               <Typography variant="h6" gutterBottom>
-                Según Auxiliar
+                Según Auxiliar (AUX)
               </Typography>
               <Grid
                 container
