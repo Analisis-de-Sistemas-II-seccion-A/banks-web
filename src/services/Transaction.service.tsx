@@ -14,6 +14,18 @@ export default class TransactionService {
         });
     }
 
+    static async getTransactionHistorySearch(account: number| null, bank: number | null, initDate: string | null | undefined, endDate: string| null | undefined): Promise<TransactionHistory[]> {
+        const url = `${environment.apiUri}/transaction-history/search?${account ? `account=${account}` : ''}${bank ? `&bank=${bank}` : ''}${initDate ? `&initDate=${initDate}` : ''}${endDate ? `&endDate=${endDate}` : ''}`;
+        return await axios
+        .get<TransactionHistory[]>(url)
+        .then((response: AxiosResponse<TransactionHistory[]>) => {
+            return response.data;
+        })
+        .catch((error: any) => {
+            throw new Error(`Error al obtener la lista de transacctions: ${error.message}`);
+        });
+    }
+
     static async getLastestTransations(accounts: number []): Promise<TransactionHistory[]> {
         return await axios
         .post<TransactionHistory[]>(`${environment.apiUri}/transaction-history/accounts`, accounts)

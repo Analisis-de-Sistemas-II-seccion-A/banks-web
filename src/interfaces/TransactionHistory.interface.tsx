@@ -10,4 +10,7 @@ export interface TransactionHistory {
         tipo_operacion: string;
         fecha: Date;
         cuenta: number;
+        banco:number;
+        moneda: string;
+        tasa_cambio: number;
       }      

@@ -12,24 +12,20 @@ import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import DownloadIcon from "@mui/icons-material/Download";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
-import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import { BarChart, LineChart, PieChart } from "@mui/x-charts";
-import { useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-const banks = [
-  { id: 1, image: "bi", name: "Banco Industrial" },
-  { id: 2, image: "banrural", name: "Banrural" },
-  { id: 3, image: "bam", name: "Banco Agromercantil" },
-];
-
-const accounts = [
-  { id: 1, name: "Cuenta 1" },
-  { id: 2, name: "Cuenta 2" },
-  { id: 3, name: "Cuenta 3" },
-];
+import { DateRange, DateRangePicker, LocalizationProvider } from "@mui/x-date-pickers-pro";
+import { DateTime } from "luxon";
+import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
+import TransactionService from "../services/Transaction.service";
+import { TransactionHistory } from "../interfaces/TransactionHistory.interface";
+import BankService from "../services/Bank.service";
+import { Account } from "../interfaces/Account.interface";
+import { Bank } from "../interfaces/Bank.interface";
+import Robot from "../assets/robot.webp";
 
 const Title = styled(Typography)({
   textAlign: "left",
@@ -64,9 +60,15 @@ function Statistics({ theme }: any) {
   const navigate = useNavigate();
   const isLargeScreen = useMediaQuery("(min-width: 900px)");
   const isDarkMode: boolean = theme.palette.mode === "dark";
-  const [selectedBank, setSelectedBank] = React.useState("");
-  const [selectedAccount, setSelectedAccount] = React.useState("");
-  const sample = [1, 10, 30, 50, 70, 90, 100];
+  const [selectedBank, setSelectedBank] = React.useState<number | null>(null);
+  const [selectedAccount, setSelectedAccount] = React.useState<number | null>(null);
+  const [transactions, setTransactions] = React.useState<TransactionHistory[]>([]);
+  const [banks, setBanks] = React.useState<Bank[]>([]);
+  const [accounts, setAccounts] = React.useState<Account[]>([]);
+  const [value, setValue] = React.useState<DateRange<DateTime>>([null, null]);
+  const [currenctBalance, setCurrentBalance] = React.useState<number>(0);
+  const [currentIncome, setCurrentIncome] = React.useState<number>(0);
+  const [currentOutcome, setCurrentOutcome] = React.useState<number>(0);
 
   const StyledCard = styled(Card)({
     width: "100%",
@@ -80,17 +82,78 @@ function Statistics({ theme }: any) {
     backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7",
   });
 
+  React.useEffect(() => {
+    handleSearchBanks();
+    handleUpdateStatistics(null, null, null, null);
+  }, []);
+
   const handleRedirect = (route: string) => {
     navigate(`/${route}`);
   };
 
-  const handleBankChange = (event: any) => {
-    setSelectedBank(event.target.value);
+  const handleUpdateStatistics = async (accParam: number | null, bankParam: number | null, InitDateParam: string | null | undefined, endDateParam: string | null | undefined) => {
+    await TransactionService.getTransactionHistorySearch(accParam, bankParam, InitDateParam, endDateParam).then(async (response) => {
+      setTransactions(response);
+      if(response.length > 0) {
+        await handleGetAmmounts(response);
+      }
+    });
+  }
+
+  const formatCurrency = (value :any) => {
+    return new Intl.NumberFormat('es-GT', {
+      style: 'currency',
+      currency: 'GTQ',
+      minimumFractionDigits: 2, 
+    }).format(value);
   };
 
-  const handleAccountChange = (event: any) => {
-    setSelectedAccount(event.target.value);
-  };
+  const handleGetAmmounts = async (transactions: TransactionHistory[]) => {
+    let income = 0;
+    let outcome = 0;
+    let balance = 0;
+  
+    transactions.forEach((transaction) => {
+      if (transaction.tipo_operacion === 'SUMA') {
+        if (transaction.moneda === 'USD') {
+          income += transaction.monto_transaccion * transaction.tasa_cambio;
+        } else {
+          income += transaction.monto_transaccion;
+        }
+      } else {
+        if (transaction.moneda === 'USD') {
+          outcome += transaction.monto_transaccion * transaction.tasa_cambio;
+        } else {
+          outcome += transaction.monto_transaccion;
+        }
+      }
+    });
+  
+    balance = income - outcome;
+    setCurrentBalance(balance);
+    setCurrentIncome(income);
+    setCurrentOutcome(outcome);
+  }
+  
+
+  const handleSearchBanks = async () => {
+    await BankService.getBanks().then((response) => {
+      setBanks(response);
+    });
+  }
+
+  const handleSearchAccounts = async (bank: number) => {
+    await BankService.getAccounts(bank).then((response) => {
+      setAccounts(response);
+    });
+  }
+
+  const handleChangeAmmount = (ammount: number, currency: string, factor: number) => {
+    if(currency === "USD") {
+      return ammount * factor;
+    }
+    return ammount;
+  }
 
   return (
     <Container maxWidth="lg">
@@ -108,11 +171,8 @@ function Statistics({ theme }: any) {
           }}
         >
           <Grid
-            justifyContent="start"
+            justifyContent={isLargeScreen ? "start" : 'center'}
             alignItems="center"
-            sx={{
-              textAlign: "end",
-            }}
             container
             spacing={2}
           >
@@ -121,12 +181,13 @@ function Statistics({ theme }: any) {
                 variant="contained"
                 color="primary"
                 startIcon={<DownloadIcon />}
+                disabled={transactions.length === 0}
                 size="large"
               >
                 Descargar Informe
               </Button>
             </Grid>
-            <Grid item style={{ marginRight: "22.25vw" }}>
+            <Grid item>
               <Button
                 variant="contained"
                 color="primary"
@@ -137,47 +198,30 @@ function Statistics({ theme }: any) {
                 Generar Reportes
               </Button>
             </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                startIcon={<DeleteIcon />}
-              >
-                Limpiar Filtros
-              </Button>
-            </Grid>
           </Grid>
-
           <Grid sx={{ marginTop: "2rem", textAlign: "end" }}>
-            <TextField
-              label="Fecha Inicial"
-              size="small"
-              type="date"
-              variant="outlined"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              style={{
-                marginRight: "16px",
-                backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-              }}
-            />
-            <TextField
-              label="Fecha Final"
-              size="small"
-              type="date"
-              variant="outlined"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              style={{
-                backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
-                borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-              }}
-            />
+            <Typography
+              variant="body1"
+              component="div"
+              sx={{ marginBottom: "0.5rem" }}
+            >
+              Elige el rango de fechas
+            </Typography>
           </Grid>
+          <div style={{ display: 'flex', alignItems: 'end', justifyContent: 'end', marginTop: "1rem", marginBottom: '2rem' }}>
+            <Grid sx={{ maxWidth: '500px' }}>
+              <LocalizationProvider dateAdapter={AdapterLuxon}>
+                <DateRangePicker
+                  value={value}
+                  maxDate={DateTime.now()}
+                  onAccept={async (newValue) => {
+                    setValue(newValue)
+                    await handleUpdateStatistics(selectedAccount, selectedBank, newValue[0]?.toISODate(), newValue[1]?.toISODate())
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
+          </div>
           <div
             style={{
               display: isLargeScreen ? "flex" : "grid",
@@ -188,7 +232,11 @@ function Statistics({ theme }: any) {
             <StyledSelect
               value={selectedBank}
               size="small"
-              onChange={handleBankChange}
+              onChange={async (event) => {
+                setSelectedBank(event.target.value as number)
+                await handleSearchAccounts(event.target.value as number);
+                await handleUpdateStatistics(selectedAccount, event.target.value as number, value[0]?.toISODate(), value[1]?.toISODate());
+              }}
               displayEmpty
               style={{
                 backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
@@ -200,8 +248,8 @@ function Statistics({ theme }: any) {
                 Seleccione un banco
               </MenuItem>
               {banks.map((bank) => (
-                <MenuItem key={bank.id} value={bank.name}>
-                  {bank.name}
+                <MenuItem key={bank.BNC_BANCO} value={bank.BNC_BANCO}>
+                  {bank.BNC_NOMBRE}
                 </MenuItem>
               ))}
             </StyledSelect>
@@ -209,7 +257,10 @@ function Statistics({ theme }: any) {
               <StyledSelect
                 value={selectedAccount}
                 size="small"
-                onChange={handleAccountChange}
+                onChange={async (event) => {
+                  setSelectedAccount(event.target.value as number)
+                  await handleUpdateStatistics(event.target.value as number, selectedBank, value[0]?.toISODate(), value[1]?.toISODate());
+                }}
                 displayEmpty
                 style={{
                   backgroundColor: isDarkMode ? "#3b3b3b" : "#ffffff",
@@ -221,149 +272,161 @@ function Statistics({ theme }: any) {
                   Seleccione una cuenta
                 </MenuItem>
                 {accounts.map((account) => (
-                  <MenuItem key={account.id} value={account.name}>
-                    {account.name}
+                  <MenuItem key={account.CNT_CUENTA} value={account.CNT_CUENTA}>
+                    {account.CNT_NOMBRE}
                   </MenuItem>
                 ))}
               </StyledSelect>
             )}
           </div>
+          <div style={{ display: 'flex', alignItems: 'end', justifyContent: 'end', marginTop: "2rem" }}>
+            <Grid sx={{ maxWidth: '500px' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={async () => {
+                  setSelectedAccount(null);
+                  setSelectedBank(null);
+                  setValue([null, null]);
+                  await handleUpdateStatistics(null, null, null, null)
+                }}
+                startIcon={<DeleteIcon />}
+              >
+                Limpiar Filtros
+              </Button>
+            </Grid>
+          </div>
         </CardContent>
       </Card >
-      <GridContainer container spacing={2}>
-        <GridItem item xs={12} sm={6} md={3}>
-          <StyledCard variant="outlined">
-            <IconWrapper>
-              <AttachMoneyIcon color="primary" />
-            </IconWrapper>
-            <CardContentWrapper>
-              <Typography variant="subtitle1" color="textSecondary">
-                Saldo Actual en la Cuenta
-              </Typography>
-              <Typography variant="h5" color="primary">
-                Q.600,000.00
-              </Typography>
-            </CardContentWrapper>
-          </StyledCard>
-        </GridItem>
-        <GridItem item xs={12} sm={6} md={3}>
-          <StyledCard variant="outlined">
-            <IconWrapper>
-              <ArrowDownwardIcon color="error" />
-            </IconWrapper>
-            <CardContentWrapper>
-              <Typography variant="subtitle1" color="textSecondary">
-                Monto de Egresos
-              </Typography>
-              <Typography variant="h5" color="error">
-                Q.230,000.00
-              </Typography>
-            </CardContentWrapper>
-          </StyledCard>
-        </GridItem>
-        <GridItem item xs={12} sm={6} md={3}>
-          <StyledCard variant="outlined">
-            <IconWrapper>
-              <ArrowUpwardIcon color="success" />
-            </IconWrapper>
-            <CardContentWrapper>
-              <Typography variant="subtitle1" color="textSecondary">
-                Monto de Ingresos
-              </Typography>
-              <Typography variant="h5" color="success">
-                Q.400,000.00
-              </Typography>
-            </CardContentWrapper>
-          </StyledCard>
-        </GridItem>
-        <GridItem item xs={12} sm={6} md={3}>
-          <StyledCard variant="outlined">
-            <IconWrapper>
-              <DoubleArrowIcon color="primary" />
-            </IconWrapper>
-            <CardContentWrapper>
-              <Typography variant="subtitle1" color="textSecondary">
-                Monto en Reserva
-              </Typography>
-              <Typography variant="h5" color="primary">
-                Q.30,000.00
-              </Typography>
-            </CardContentWrapper>
-          </StyledCard>
-        </GridItem>
-      </GridContainer>
-      <div
-        style={{
-          display: isLargeScreen ? "flex" : "grid",
-          alignItems: "center",
-          justifyContent: "center",
-          marginTop: "2rem",
-          marginBottom: "2rem",
-        }}
-      >
-        <LineChart
-          sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
-          xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-          series={[
-            {
-              data: [20000, 15000, 24000, 40000, 10000, 5000],
-            },
-          ]}
-          width={isLargeScreen ? 500 : 400}
-          height={400}
-        />
-        <PieChart
-          sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
-          series={[
-            {
-              data: [
-                { id: 0, value: 20, label: "Ingresos" },
-                { id: 1, value: 10, label: "Egresos" },
-                { id: 2, value: 5, label: "Reserva" },
-              ],
-            },
-          ]}
-          width={isLargeScreen ? 500 : 400}
-          height={400}
-        />
-      </div>
-      <div
-        style={{
-          display: isLargeScreen ? "flex" : "grid",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: "2rem",
-          marginTop: "wrem",
-        }}
-      >
+      {transactions.length > 0 ? (<Box>
+        <GridContainer container spacing={2} display={isLargeScreen ? 'flex' : 'grid'} alignItems={'center'} justifyContent={'center'} maxWidth={'lg'}>
+          <GridItem item xs={12} sm={6} md={3}>
+            <StyledCard variant="outlined">
+              <IconWrapper>
+                <AttachMoneyIcon color="primary" />
+              </IconWrapper>
+              <CardContentWrapper>
+                <Typography variant="subtitle1" color="textSecondary">
+                  Balance
+                </Typography>
+                <Typography variant="h5" color="primary">
+                  {formatCurrency(currenctBalance)}
+                </Typography>
+              </CardContentWrapper>
+            </StyledCard>
+          </GridItem>
+          <GridItem item xs={12} sm={6} md={3}>
+            <StyledCard variant="outlined">
+              <IconWrapper>
+                <ArrowUpwardIcon color="success" />
+              </IconWrapper>
+              <CardContentWrapper>
+                <Typography variant="subtitle1" color="textSecondary">
+                  Monto de Ingresos
+                </Typography>
+                <Typography variant="h5" color="success">
+                 {formatCurrency(currentIncome)}
+                </Typography>
+              </CardContentWrapper>
+            </StyledCard>
+          </GridItem>
+          <GridItem item xs={12} sm={6} md={3}>
+            <StyledCard variant="outlined">
+              <IconWrapper>
+                <ArrowDownwardIcon color="error" />
+              </IconWrapper>
+              <CardContentWrapper>
+                <Typography variant="subtitle1" color="textSecondary">
+                  Monto de Egresos
+                </Typography>
+                <Typography variant="h5" color="error">
+                 {formatCurrency(currentOutcome)}
+                </Typography>
+              </CardContentWrapper>
+            </StyledCard>
+          </GridItem>
+        </GridContainer>
+        <div
+          style={{
+            display: isLargeScreen ? "flex" : "grid",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: "2rem",
+            marginBottom: "2rem",
+          }}
+        >
+          <LineChart
+            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
+            xAxis={[{ data: transactions.map((transaction) => DateTime.fromFormat(transaction.fecha.toString(), "yyyy-MM-dd").day) }]}
+            series={[
+              {
+                label: "Ingresos por Día del Mes",
+                area: true,
+                data: transactions.map((transaction) => handleChangeAmmount(transaction.monto_transaccion, transaction.moneda, transaction.tasa_cambio)),
+                color: '#00fcce'
+              },
+            ]}
+            width={isLargeScreen ? 500 : 400}
+            height={400}
+
+          />
+          <PieChart
+            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
+            series={[
+              {
+                data: [
+                  { id: 0, value: currentIncome, label: "Ingresos", color: "#0bb302" },
+                  { id: 1, value: currentOutcome, label: "Egresos", color: "#fc0000" },
+                ],
+              },
+            ]}
+            width={isLargeScreen ? 500 : 400}
+            height={400}
+          />
+        </div>
+        <div
+          style={{
+            display: isLargeScreen ? "flex" : "grid",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "2rem",
+            marginTop: "wrem",
+          }}
+        >
+          <BarChart
+            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
+            xAxis={[
+              { scaleType: "band", data: transactions.filter((tr) => tr.tipo_operacion === "RESTA").map((transaction) => transaction.descripcion) },
+            ]}
+            series={[{ data: transactions.filter((tr) => tr.tipo_operacion === "RESTA").map((transaction) =>handleChangeAmmount(transaction.monto_transaccion, transaction.moneda, transaction.tasa_cambio)),  label: "Gastos por categoría", color: "#e04c02"}]}
+            layout="vertical"
+
+            width={isLargeScreen ? 500 : 400}
+            height={400}
+          />
+
         <BarChart
-          sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
-          title="Gastos por Categoría"
-          yAxis={[
-            { scaleType: "band", data: ["Gasolina", "Comida", "Utilería"] },
-          ]}
-          series={[{ data: [5000, 10000, 4000] }]}
-          layout="horizontal"
-          width={isLargeScreen ? 500 : 400}
-          height={400}
-        />
-        <LineChart
-          sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
-          xAxis={[{ data: sample }]}
-          yAxis={[
-            { id: "linearAxis", scaleType: "linear" },
-            { id: "logAxis", scaleType: "log" },
-          ]}
-          series={[
-            { yAxisKey: "linearAxis", data: sample, label: "Ingresos" },
-            { yAxisKey: "logAxis", data: sample, label: "Egresos" },
-          ]}
-          leftAxis="linearAxis"
-          rightAxis="logAxis"
-          width={isLargeScreen ? 500 : 400}
-          height={400}
-        />
-      </div>
+            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
+            xAxis={[
+              { scaleType: "band", data: transactions.filter((tr) => tr.tipo_operacion === "SUMA").map((transaction) => transaction.descripcion) },
+            ]}
+            series={[{ data: transactions.filter((tr) => tr.tipo_operacion === "SUMA").map((transaction) =>handleChangeAmmount(transaction.monto_transaccion, transaction.moneda, transaction.tasa_cambio)),  label: "Ingresos por categoría", color: "#000dfc"}]}
+            layout="vertical"
+
+            width={isLargeScreen ? 500 : 400}
+            height={400}
+          />
+         
+        </div>
+      </Box>) : (
+        <Box sx={{ marginBottom: '2rem' }}>
+          <Typography variant="h5" color="textSecondary" sx={{ textAlign: 'center', marginTop: '2rem' }}>
+            No se encontraron resultados
+          </Typography>
+          <img src={Robot} alt="Logo" height={300} />
+        </Box>
+      )}
     </Container>
   );
 }

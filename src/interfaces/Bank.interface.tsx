@@ -5,4 +5,5 @@ export interface Bank {
   BNC_TELEFONO: number;
   BNC_CORREO: string;
   BNC_IMAGEN: string;
+  BNC_TASA_CAMBIO: number;
 }
