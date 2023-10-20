@@ -9,7 +9,6 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
-import DownloadIcon from "@mui/icons-material/Download";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import { styled } from "@mui/material/styles";
@@ -82,6 +81,7 @@ function Statistics({ theme }: any) {
     backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7",
   });
 
+
   React.useEffect(() => {
     handleSearchBanks();
     handleUpdateStatistics(null, null, null, null);
@@ -91,6 +91,8 @@ function Statistics({ theme }: any) {
     navigate(`/${route}`);
   };
 
+  
+  
   const handleUpdateStatistics = async (accParam: number | null, bankParam: number | null, InitDateParam: string | null | undefined, endDateParam: string | null | undefined) => {
     await TransactionService.getTransactionHistorySearch(accParam, bankParam, InitDateParam, endDateParam).then(async (response) => {
       setTransactions(response);
@@ -176,17 +178,6 @@ function Statistics({ theme }: any) {
             container
             spacing={2}
           >
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<DownloadIcon />}
-                disabled={transactions.length === 0}
-                size="large"
-              >
-                Descargar Informe
-              </Button>
-            </Grid>
             <Grid item>
               <Button
                 variant="contained"
