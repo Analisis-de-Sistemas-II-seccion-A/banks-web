@@ -140,7 +140,7 @@ const Transfer = ({ theme }: any) => {
         setShowError(true);
       } else {
         TransactionService.insertTransaction({
-          TRA_DESCRIPCION: description || "",
+          TRA_DESCRIPCION: description || "Tranferencias",
           TTR_TIPO_TRANSACCION: 3,
           OTR_ORIGEN_TRANSACCION: 4,
           TRA_MONTO: monto,
@@ -148,7 +148,7 @@ const Transfer = ({ theme }: any) => {
           CNT_CUENTA: numeroCuentaOrigen
         }).then(() => {
           TransactionService.insertTransaction({
-            TRA_DESCRIPCION: description || "",
+            TRA_DESCRIPCION: description || "Tranferencias",
             TTR_TIPO_TRANSACCION: 1,
             OTR_ORIGEN_TRANSACCION: 3,
             TRA_MONTO: monto,

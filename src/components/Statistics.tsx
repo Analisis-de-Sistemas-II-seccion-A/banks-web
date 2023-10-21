@@ -347,20 +347,22 @@ function Statistics({ theme }: any) {
             marginBottom: "2rem",
           }}
         >
-          <LineChart
-            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
-            xAxis={[{ data: transactions.map((transaction) => DateTime.fromFormat(transaction.fecha.toString(), "yyyy-MM-dd").day) }]}
-            series={[
-              {
-                label: "Ingresos por Día del Mes",
+          {transactions.filter((tr) => tr.tipo_operacion === "SUMA").length === 0 && (
+            <LineChart
+              sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
+              xAxis={[{ data: transactions.filter((tr) => tr.tipo_operacion === "SUMA").map((transaction) => DateTime.fromFormat(transaction.fecha.toString(), "yyyy-MM-dd").day) }]}
+              series={[
+                {
+                  label: "Ingresos por Día del Mes",
 
-                data: transactions.map((transaction) => handleChangeAmmount(transaction.monto_transaccion, transaction.moneda, transaction.tasa_cambio)),
-                color: '#00fcce'
-              },
-            ]}
-            width={isLargeScreen ? 500 : 400}
-            height={400}
-          />
+                  data: transactions.filter((tr) => tr.tipo_operacion === "SUMA").map((transaction) => handleChangeAmmount(transaction.monto_transaccion, transaction.moneda, transaction.tasa_cambio)),
+                  color: '#00fcce'
+                },
+              ]}
+              width={isLargeScreen ? 500 : 400}
+              height={400}
+            />
+          )}
           <PieChart
             sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
             series={[

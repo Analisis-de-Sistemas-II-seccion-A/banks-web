@@ -184,7 +184,7 @@ const ExecuteTransaction = ({ theme }: any) => {
         } else {
         TransactionService.insertTransaction({
           TRA_NUMERO_DOCUMENTO: numeroDocumento!,
-          TRA_DESCRIPCION: description,
+          TRA_DESCRIPCION: description? description: "Transacción",
           TTR_TIPO_TRANSACCION: type === "income" ? 1 : 2,
           OTR_ORIGEN_TRANSACCION: origenIngreso!,
           TDO_TIPO_DOCUMENTO: tipoDocumento!,
