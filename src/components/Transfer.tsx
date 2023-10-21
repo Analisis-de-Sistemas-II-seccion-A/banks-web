@@ -35,7 +35,9 @@ const Transfer = ({ theme }: any) => {
   const [banks, setBanks] = useState<Bank[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [numeroCuentaOrigen, setNumeroCuentaOrigen] = useState<number | null>();
-  const [numeroCuentaDestino, setNumeroCuentaDestino] = useState<number | null>();
+  const [numeroCuentaDestino, setNumeroCuentaDestino] = useState<
+    number | null
+  >();
   const [fecha, setFecha] = useState("");
   const [monto, setMonto] = useState<number | null>();
   const [NCOrigenError, setNCOrigenError] = useState(false);
@@ -62,9 +64,11 @@ const Transfer = ({ theme }: any) => {
   }, []);
 
   useEffect(() => {
-    dataservice.getAccounts(dataservice.selectedBank().BNC_BANCO).then((accounts) => {
-      setAccounts(accounts);
-    });
+    dataservice
+      .getAccounts(dataservice.selectedBank().BNC_BANCO)
+      .then((accounts) => {
+        setAccounts(accounts);
+      });
 
     CatalogService.getCurrencies().then((currencies) => {
       setCurrencies(currencies);
@@ -72,7 +76,9 @@ const Transfer = ({ theme }: any) => {
 
     dataservice.getBanks().then((banks) => {
       if (selectedBank) {
-        setBanks(banks.filter(bank => bank.BNC_BANCO !== selectedBank.BNC_BANCO));
+        setBanks(
+          banks.filter((bank) => bank.BNC_BANCO !== selectedBank.BNC_BANCO)
+        );
       }
     });
   }, [selectedBank]);
@@ -81,7 +87,7 @@ const Transfer = ({ theme }: any) => {
     await dataservice.getAccounts(bankId).then((accounts) => {
       setDestinationAccounts(accounts);
     });
-  }
+  };
 
   const clearInputs = () => {
     setNumeroCuentaOrigen(null);
@@ -133,10 +139,22 @@ const Transfer = ({ theme }: any) => {
     } else {
       setMontoError(false);
     }
-    if (numeroCuentaOrigen && numeroCuentaDestino && fecha && monto && bankDestination) {
-      if (accounts.find(account => account.CNT_CUENTA === numeroCuentaOrigen)?.MND_MONEDA 
-      !== destinationAccounts.find(account => account.CNT_CUENTA === numeroCuentaDestino)?.MND_MONEDA
-      || accounts.find(account => account.CNT_CUENTA === numeroCuentaOrigen)?.CNT_SALDO! < monto) {
+    if (
+      numeroCuentaOrigen &&
+      numeroCuentaDestino &&
+      fecha &&
+      monto &&
+      bankDestination
+    ) {
+      if (
+        accounts.find((account) => account.CNT_CUENTA === numeroCuentaOrigen)
+          ?.MND_MONEDA !==
+          destinationAccounts.find(
+            (account) => account.CNT_CUENTA === numeroCuentaDestino
+          )?.MND_MONEDA ||
+        accounts.find((account) => account.CNT_CUENTA === numeroCuentaOrigen)
+          ?.CNT_SALDO! < monto
+      ) {
         setShowError(true);
       } else {
         TransactionService.insertTransaction({
@@ -145,7 +163,7 @@ const Transfer = ({ theme }: any) => {
           OTR_ORIGEN_TRANSACCION: 4,
           TRA_MONTO: monto,
           TRA_FECHA: fecha,
-          CNT_CUENTA: numeroCuentaOrigen
+          CNT_CUENTA: numeroCuentaOrigen,
         }).then(() => {
           TransactionService.insertTransaction({
             TRA_DESCRIPCION: description || "Tranferencias",
@@ -153,13 +171,15 @@ const Transfer = ({ theme }: any) => {
             OTR_ORIGEN_TRANSACCION: 3,
             TRA_MONTO: monto,
             TRA_FECHA: fecha,
-            CNT_CUENTA: numeroCuentaDestino
-          }).then(() => {
-            navigate("/transactions");
-            clearInputs();
-          }).catch((error) => {
-            console.log(error);
-          });
+            CNT_CUENTA: numeroCuentaDestino,
+          })
+            .then(() => {
+              navigate("/transactions");
+              clearInputs();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         });
       }
     }
@@ -211,7 +231,7 @@ const Transfer = ({ theme }: any) => {
             >
               <div style={{ margin: "20px" }}>
                 <form>
-                  <Grid container spacing={2}>
+                  <Grid container justifyContent="center" spacing={2}>
                     <Grid item xs={12}>
                       <FormControl size="small" style={{ width: "100%" }}>
                         <InputLabel id="cuenta-select-label">
@@ -224,6 +244,7 @@ const Transfer = ({ theme }: any) => {
                           <Select
                             fullWidth
                             size="small"
+                            label="Cuenta Origen"
                             value={numeroCuentaOrigen}
                             onChange={(e) => {
                               setNumeroCuentaOrigen(e.target.value as number);
@@ -244,7 +265,9 @@ const Transfer = ({ theme }: any) => {
                                 key={account.CNT_CUENTA}
                                 value={account.CNT_CUENTA}
                               >
-                                {account.CNT_NUMERO_CUENTA + " - " + account.CNT_NOMBRE}
+                                {account.CNT_NUMERO_CUENTA +
+                                  " - " +
+                                  account.CNT_NOMBRE}
                               </MenuItem>
                             ))}
                           </Select>
@@ -266,88 +289,37 @@ const Transfer = ({ theme }: any) => {
                       </FormControl>
                     </Grid>
                     <Grid
-                      item
-                      xs={isLargeScreen && bankDestination ? 6 : 12}
+                      container
+                      justifyContent="start"
+                      spacing={2}
+                      marginTop={"0.5px"}
+                      marginLeft={"0.5px"}
                     >
-                      <FormControl size="small" style={{ width: "100%" }}>
-                        <InputLabel id="cuenta-select-label">
-                          Banco Destino
-                        </InputLabel>
-                        <Tooltip
-                          placement="top-start"
-                          title="Seleccione el banco de destino"
-                        >
-                          <Select
-                            className="textfield"
-                            fullWidth
-                            size="small"
-                            value={bankDestination}
-                            onChange={(e) => {
-                              setBankDestination(e.target.value as number);
-                              getDestinationAccounts(e.target.value as number);
-                              if (BDError) {
-                                setNCDestinoError(false);
-                              }
-                            }}
-                            error={BDError}
-                            style={{
-                              backgroundColor: isDarkMode
-                                ? "#3b3b3b"
-                                : "#ffffff",
-                              borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
-                            }}
-                          >
-                            {banks.map((bank) => (
-                              <MenuItem
-                                key={bank.BNC_BANCO}
-                                value={bank.BNC_BANCO}
-                              >
-                                {bank.BNC_NOMBRE}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </Tooltip>
-                        {BDError && (
-                          <FormHelperText
-                            sx={{
-                              backgroundColor: isDarkMode
-                                ? "#1e1e1e"
-                                : "#f7f7f7",
-                              color: "#f44336",
-                              margin: 0,
-                              paddingRight: 1,
-                            }}
-                          >
-                            *Seleccione un banco
-                          </FormHelperText>
-                        )}
-                      </FormControl>
-                    </Grid>
-                    {bankDestination && (
-                      <Grid
-                        item
-                        xs={isLargeScreen ? 6 : 12}
-                      >
+                      <Grid item xs={12} sm={4.8} md={4.8} lg={4.8}>
                         <FormControl size="small" style={{ width: "100%" }}>
                           <InputLabel id="cuenta-select-label">
-                            Cuenta Destino
+                            Banco Destino
                           </InputLabel>
                           <Tooltip
                             placement="top-start"
-                            title="Seleccione la cuenta destino"
+                            title="Seleccione el banco de destino"
                           >
                             <Select
                               className="textfield"
                               fullWidth
                               size="small"
-                              value={numeroCuentaDestino}
+                              label="Banco Destino"
+                              value={bankDestination}
                               onChange={(e) => {
-                                setNumeroCuentaDestino(e.target.value as number);
-                                if (NCDestinoError) {
+                                setBankDestination(e.target.value as number);
+                                getDestinationAccounts(
+                                  e.target.value as number
+                                );
+                                if (BDError) {
                                   setNCDestinoError(false);
                                 }
                               }}
-                              error={NCDestinoError}
+                              error={BDError}
                               style={{
                                 backgroundColor: isDarkMode
                                   ? "#3b3b3b"
@@ -355,17 +327,17 @@ const Transfer = ({ theme }: any) => {
                                 borderColor: isDarkMode ? "#3b3b3b" : "#bcbcbc",
                               }}
                             >
-                              {destinationAccounts.map((account) => (
+                              {banks.map((bank) => (
                                 <MenuItem
-                                  key={account.CNT_CUENTA}
-                                  value={account.CNT_CUENTA}
+                                  key={bank.BNC_BANCO}
+                                  value={bank.BNC_BANCO}
                                 >
-                                  {account.CNT_NUMERO_CUENTA + " - " + account.CNT_NOMBRE}
+                                  {bank.BNC_NOMBRE}
                                 </MenuItem>
                               ))}
                             </Select>
                           </Tooltip>
-                          {NCDestinoError && (
+                          {BDError && (
                             <FormHelperText
                               sx={{
                                 backgroundColor: isDarkMode
@@ -376,41 +348,117 @@ const Transfer = ({ theme }: any) => {
                                 paddingRight: 1,
                               }}
                             >
-                              *Seleccione un número de cuenta
+                              *Seleccione un banco
                             </FormHelperText>
                           )}
                         </FormControl>
                       </Grid>
-                    )}
+                      {bankDestination && (
+                        <Grid item xs={isLargeScreen ? 7 : 12}>
+                          <FormControl size="small" style={{ width: "100%" }}>
+                            <InputLabel id="cuenta-select-label">
+                              Cuenta Destino
+                            </InputLabel>
+                            <Tooltip
+                              placement="top-start"
+                              title="Seleccione la cuenta destino"
+                            >
+                              <Select
+                                className="textfield"
+                                fullWidth
+                                label="Cuenta Destino"
+                                size="small"
+                                value={numeroCuentaDestino}
+                                onChange={(e) => {
+                                  setNumeroCuentaDestino(
+                                    e.target.value as number
+                                  );
+                                  if (NCDestinoError) {
+                                    setNCDestinoError(false);
+                                  }
+                                }}
+                                error={NCDestinoError}
+                                style={{
+                                  backgroundColor: isDarkMode
+                                    ? "#3b3b3b"
+                                    : "#ffffff",
+                                  borderColor: isDarkMode
+                                    ? "#3b3b3b"
+                                    : "#bcbcbc",
+                                }}
+                              >
+                                {destinationAccounts.map((account) => (
+                                  <MenuItem
+                                    key={account.CNT_CUENTA}
+                                    value={account.CNT_CUENTA}
+                                  >
+                                    {account.CNT_NUMERO_CUENTA +
+                                      " - " +
+                                      account.CNT_NOMBRE}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </Tooltip>
+                            {NCDestinoError && (
+                              <FormHelperText
+                                sx={{
+                                  backgroundColor: isDarkMode
+                                    ? "#1e1e1e"
+                                    : "#f7f7f7",
+                                  color: "#f44336",
+                                  margin: 0,
+                                  paddingRight: 1,
+                                }}
+                              >
+                                *Seleccione un número de cuenta
+                              </FormHelperText>
+                            )}
+                          </FormControl>
+                        </Grid>
+                      )}
+                    </Grid>
                     {numeroCuentaOrigen && (
-                      <div style={{marginTop: '1rem'}}>
-                        <Grid
-                          item
-                          xs={12}>
+                      <div style={{ marginTop: "2rem" }}>
+                        <Grid item xs={12}>
                           <Typography
-                            variant="h6"
+                            variant="subtitle1"
                             color="textPrimary"
-                            textAlign={"center"}
                             gutterBottom
+                            textAlign={"center"}
                           >
-                            {"Monto disponible para transferir en " + accounts.find(account => account.CNT_CUENTA === numeroCuentaOrigen)?.CNT_NOMBRE}
+                            {"Monto disponible para transferir en " +
+                              accounts.find(
+                                (account) =>
+                                  account.CNT_CUENTA === numeroCuentaOrigen
+                              )?.CNT_NOMBRE +
+                              ": "}
                           </Typography>
                         </Grid>
-                        <Grid
-                          item
-                          xs={12}>
-                          <Typography
-                            variant="h6"
-                            textAlign={"center"}
-                            gutterBottom
-                            marginBottom={"2rem"}
-                          >
-                            {formatCurrency(accounts.find(account => account.CNT_CUENTA === numeroCuentaOrigen)?.CNT_SALDO!, currencies.find((currency) => currency.MND_MONEDA === accounts.find(account => account.CNT_CUENTA === numeroCuentaOrigen)?.MND_MONEDA)?.MND_ABREVIATURA || "GTQ")}
+                        <Grid item textAlign={"center"}>
+                          <Typography variant="h6" gutterBottom>
+                            {formatCurrency(
+                              accounts.find(
+                                (account) =>
+                                  account.CNT_CUENTA === numeroCuentaOrigen
+                              )?.CNT_SALDO!,
+                              currencies.find(
+                                (currency) =>
+                                  currency.MND_MONEDA ===
+                                  accounts.find(
+                                    (account) =>
+                                      account.CNT_CUENTA === numeroCuentaOrigen
+                                  )?.MND_MONEDA
+                              )?.MND_ABREVIATURA || "GTQ"
+                            )}
                           </Typography>
                         </Grid>
                       </div>
                     )}
-                    <Grid item xs={isLargeScreen ? 6 : 12}>
+                    <Grid
+                      item
+                      xs={isLargeScreen ? 6 : 12}
+                      style={{ marginTop: "0.5rem" }}
+                    >
                       <Tooltip
                         title={`Ingrese la fecha de la transferencia`}
                         placement="top-start"
@@ -453,12 +501,14 @@ const Transfer = ({ theme }: any) => {
                         />
                       </Tooltip>
                     </Grid>
-                    <Grid
-                      item
-                      xs={isLargeScreen ? 4 : 12}
-                      marginLeft={isLargeScreen ? "2.5rem" : ""}
-                    >
-                      <FormControl size="small" style={{ width: "100%" }}>
+                    <Grid item xs={isLargeScreen ? 4 : 6}>
+                      <FormControl
+                        size="small"
+                        style={{
+                          width: "100%",
+                          marginTop: isLargeScreen ? "0.5rem" : "",
+                        }}
+                      >
                         <Tooltip
                           title="Ingrese el monto de la transferencia"
                           placement="top-start"
@@ -518,6 +568,7 @@ const Transfer = ({ theme }: any) => {
                       </FormControl>
                     </Grid>
                   </Grid>
+
                   <Grid style={{ marginTop: "2rem" }}>
                     <Tooltip
                       title="Agregue una descripción o comentario (opcional)"
@@ -540,22 +591,41 @@ const Transfer = ({ theme }: any) => {
                     </Tooltip>
                   </Grid>
                   {showError && (
-                    <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
-                      <Alert severity="error" action={
-                        <IconButton
-                          aria-label="close"
-                          color="inherit"
-                          size="small"
-                          onClick={() => {
-                            setShowError(false);
-                          }}
-                        >
-                          <Close fontSize="inherit" />
-                        </IconButton>
-                      }>No se puede transferir entre cuentas de diferentes monedas y tampoco un monto mayor al de la cuenta</Alert>
-                    </div>)
-                  }
-                  <div style={{ textAlign: "center", marginTop: "2rem" }}>
+                    <div
+                      style={{
+                        alignItems: "center",
+                        display: "flex",
+                        justifyContent: "center",
+                        marginTop: "2rem",
+                      }}
+                    >
+                      <Alert
+                        severity="error"
+                        action={
+                          <IconButton
+                            aria-label="close"
+                            color="inherit"
+                            size="small"
+                            onClick={() => {
+                              setShowError(false);
+                            }}
+                          >
+                            <Close fontSize="inherit" />
+                          </IconButton>
+                        }
+                      >
+                        No se puede transferir entre cuentas de diferentes
+                        monedas y tampoco un monto mayor al de la cuenta
+                      </Alert>
+                    </div>
+                  )}
+                  <div
+                    style={{
+                      textAlign: "center",
+                      marginTop: "2rem",
+                      marginBottom: "2rem",
+                    }}
+                  >
                     <Button
                       variant="contained"
                       color="primary"
