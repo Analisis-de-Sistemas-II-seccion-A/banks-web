@@ -29,6 +29,18 @@ import reportService from "../services/Report.service";
 function ReportsDetail({ theme }: any) {
   const isLargeScreen = useMediaQuery("(min-width: 600px");
   const { type } = useParams();
+  const [reportType, setReportType] = useState<string | undefined>();
+
+  useEffect(() => {
+  if(type === "statement") {
+    setReportType( "Estado de Cuenta");
+  } else if(type === "income") {
+    setReportType("Ingresos");
+  } else if(type === "expenses") {
+    setReportType("Egresos");
+  }
+  }
+  , [type]);
   const isDarkMode: boolean = theme.palette.mode === "dark";
   const [banks, setBanks] = useState<Bank[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -80,7 +92,7 @@ function ReportsDetail({ theme }: any) {
         color="textPrimary"
         gutterBottom
       >
-        Reporte de Ingresos
+        {"Reporte de " + reportType}
       </Typography>
       <Grid
         container
