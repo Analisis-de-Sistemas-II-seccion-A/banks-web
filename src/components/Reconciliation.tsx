@@ -92,6 +92,103 @@ function BankReconciliation({ theme }: any) {
     if (nombreImagen === 'bam') return bam;
   }
 
+  const formatCurrency = (value: any) => {
+    return new Intl.NumberFormat('es-GT', {
+      style: 'currency',
+      currency: 'GTQ',
+      minimumFractionDigits: 2,
+    }).format(value);
+  };
+
+  const handleSetSystemResults = (result: TransactionHistory[]) => {
+    let income = 0;
+    let outcome = 0;
+
+    result.forEach((transaction) => {
+      if (transaction.tipo_operacion === 'SUMA') {
+        if (transaction.moneda === 'USD') {
+          income += transaction.monto_transaccion * transaction.tasa_cambio;
+        } else {
+          income += transaction.monto_transaccion;
+        }
+      } else {
+        if (transaction.moneda === 'USD') {
+          outcome += transaction.monto_transaccion * transaction.tasa_cambio;
+        } else {
+          outcome += transaction.monto_transaccion;
+        }
+      }
+    });
+
+    setSystemCharge(income);
+    setSystemPayments(outcome);
+    handleCalculateSystemResult(income, outcome);
+  }
+
+  const handleRedirect = (route: string) => {
+    navigate(`/${route}`);
+
+  };
+
+
+  const handleSubmitAccount = async () => {
+    setIsRangeInvalid(false);
+
+    if (!selectedAccount || !value[0] || !value[1]) {
+      setIsRangeInvalid(true);
+    }
+
+    if (selectedAccount && value[0] && value[1]) {
+      await getTransactions(value[0].toISODate() || "", value[1].toISODate() || "", selectedAccount!);
+    }
+  };
+
+  const handleSubmitConciliation = () => {
+    if (bankPayments || bankCharge) {
+      handleSaveConciliation();
+    } else {
+      if (!bankPayments) {
+        setBankPaymentError(true);
+      }
+      if (!bankCharge) {
+        setBankChargeError(true);
+      }
+    }
+  }
+
+  const handleSaveConciliation = () => {
+    ReconciliationService.insertReconciliation({
+      CON_FECHA: DateTime.now().toISODate() || "",
+      CON_INGRESOS_BANCO: bankCharge,
+      CON_EGRESOS_BANCO: bankPayments,
+      CON_INGRESOS_SISTEMA: systemCharge,
+      CON_EGRESOS_SISTEMA: systemPayments,
+      CON_DIFERENCIA: bankResult > systemResult ? bankResult - systemResult : systemResult - bankResult,
+      cnt_cuenta: selectedAccount!
+    }).then((response) => {
+      TransactionService.insertTransaction({
+        TRA_MONTO: bankResult > systemResult ? bankResult - systemResult : systemResult - bankResult,
+        TRA_DESCRIPCION: "CONCILIACIÓN",
+        TTR_TIPO_TRANSACCION: bankResult > systemResult ? 1 : 2,
+        OTR_ORIGEN_TRANSACCION: 23,
+        CNT_CUENTA: selectedAccount!,
+        CON_CONCILIACION: response.CON_CONCILIACION,
+        TRA_FECHA: DateTime.now().toISODate() || ""
+      }).then(() => {
+        handleRedirect(`accounts/${selectedAccount}/detail`);
+      });
+    });
+  }
+
+  const handleCalculateBankResult = (charge: number, payments: number) => {
+    const result = charge - payments;
+    setBankResult(result);
+  }
+
+  const handleCalculateSystemResult = (charge: number, payments: number) => {
+    const result = charge - payments;
+    setSystemResult(result);
+  }
 
   const columns: GridColDef[] = [
     {
@@ -149,6 +246,7 @@ function BankReconciliation({ theme }: any) {
     },
   ];
 
+
   const rows = reconciliations.map((reconciliation) => {
     return {
       id: reconciliation.CON_CONCILIACION,
@@ -160,91 +258,6 @@ function BankReconciliation({ theme }: any) {
       diferencia: formatCurrency(reconciliation.CON_DIFERENCIA),
     };
   });
-
-  const handleSetSystemResults = (result: TransactionHistory[]) => {
-    let income = 0;
-    let outcome = 0;
-
-    result.forEach((transaction) => {
-      if (transaction.tipo_operacion === 'SUMA') {
-        if (transaction.moneda === 'USD') {
-          income += transaction.monto_transaccion * transaction.tasa_cambio;
-        } else {
-          income += transaction.monto_transaccion;
-        }
-      } else {
-        if (transaction.moneda === 'USD') {
-          outcome += transaction.monto_transaccion * transaction.tasa_cambio;
-        } else {
-          outcome += transaction.monto_transaccion;
-        }
-      }
-    });
-
-    setSystemCharge(income);
-    setSystemPayments(outcome);
-    handleCalculateSystemResult(income, outcome);
-  }
-
-  const handleRedirect = (route: string) => {
-    navigate(`/${route}`);
-
-  };
-
-  const formatCurrency = (value: any) => {
-    return new Intl.NumberFormat('es-GT', {
-      style: 'currency',
-      currency: 'GTQ',
-      minimumFractionDigits: 2,
-    }).format(value);
-  };
-  const handleSubmitAccount = async () => {
-    setIsRangeInvalid(false);
-
-    if (!selectedAccount || !value[0] || !value[1]) {
-      setIsRangeInvalid(true);
-    }
-
-    if (selectedAccount && value[0] && value[1]) {
-      await getTransactions(value[0].toISODate() || "", value[1].toISODate() || "", selectedAccount!);
-    }
-  };
-
-  const handleSubmitConciliation = () => {
-    if (!bankPayments) {
-      setBankPaymentError(true);
-    }
-    if (!bankCharge) {
-      setBankChargeError(true);
-    }
-
-    if (bankPayments && bankCharge) {
-      handleSaveConciliation();
-    }
-  }
-
-  const handleSaveConciliation = () => {
-    ReconciliationService.setReconciliation({
-      CON_FECHA: DateTime.now().toISODate() || "",
-      CON_INGRESOS_BANCO: bankCharge,
-      CON_EGRESOS_BANCO: bankPayments,
-      CON_INGRESOS_SISTEMA: systemCharge,
-      CON_EGRESOS_SISTEMA: systemPayments,
-      CON_DIFERENCIA: bankResult +- systemResult,
-      cnt_cuenta: selectedAccount!
-    })
-    handleRedirect("reconciliation/detail");
-  }
-
-  const handleCalculateBankResult = (charge: number, payments: number) => {
-    const result = charge - payments;
-    setBankResult(result);
-  }
-
-  const handleCalculateSystemResult = (charge: number, payments: number) => {
-    const result = charge - payments;
-    setSystemResult(result);
-  }
 
   if (!selectedBank) {
     return (
