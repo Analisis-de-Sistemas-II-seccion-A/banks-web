@@ -622,7 +622,7 @@ function BankReconciliation({ theme }: any) {
                     endIcon={<ArrowForwardIosOutlined />}
                     onClick={handleSubmitConciliation}
                   >
-                    Detalle de Conciliación
+                    Conciliar
                   </Button>
                 </Grid>
               </Box>

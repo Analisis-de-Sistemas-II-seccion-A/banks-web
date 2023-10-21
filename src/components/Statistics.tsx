@@ -12,7 +12,7 @@ import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import { styled } from "@mui/material/styles";
-import { BarChart, LineChart, PieChart } from "@mui/x-charts";
+import { BarChart, PieChart } from "@mui/x-charts";
 import { Box, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -347,22 +347,6 @@ function Statistics({ theme }: any) {
             marginBottom: "2rem",
           }}
         >
-          {transactions.filter((tr) => tr.tipo_operacion === "SUMA").length === 0 && (
-            <LineChart
-              sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
-              xAxis={[{ data: transactions.filter((tr) => tr.tipo_operacion === "SUMA").map((transaction) => DateTime.fromFormat(transaction.fecha.toString(), "yyyy-MM-dd").day) }]}
-              series={[
-                {
-                  label: "Ingresos por Día del Mes",
-
-                  data: transactions.filter((tr) => tr.tipo_operacion === "SUMA").map((transaction) => handleChangeAmmount(transaction.monto_transaccion, transaction.moneda, transaction.tasa_cambio)),
-                  color: '#00fcce'
-                },
-              ]}
-              width={isLargeScreen ? 500 : 400}
-              height={400}
-            />
-          )}
           <PieChart
             sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
             series={[
@@ -386,7 +370,7 @@ function Statistics({ theme }: any) {
             marginTop: "wrem",
           }}
         >
-          {transactions.filter((tr) => tr.tipo_operacion === "RESTA").length === 0 && (
+          {transactions.filter((tr) => tr.tipo_operacion === "RESTA") && (
             <BarChart
               sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
               xAxis={[
@@ -398,9 +382,7 @@ function Statistics({ theme }: any) {
               width={isLargeScreen ? 500 : 400}
               height={400}
             />
-          )
-
-          }
+          )}
 
           {transactions.filter((tr) => tr.tipo_operacion === "SUMA") && (
             <BarChart
@@ -414,8 +396,7 @@ function Statistics({ theme }: any) {
               width={isLargeScreen ? 500 : 400}
               height={400}
             />
-          )
-          }
+          )}
         </div>
       </Box>) : (
         <Box sx={{ marginBottom: '2rem' }}>
