@@ -29,4 +29,15 @@ export default class ReconciliationService {
           throw new Error(`Error al obtener la lista de conciliaciones: ${error.message}`);
         });
     }
+
+    static async insertReconciliation(reconciliation: Reconciliation): Promise<Reconciliation> {
+        return await axios
+        .post<Reconciliation>(`${environment.apiUri}/conciliation`, reconciliation)
+        .then((response: AxiosResponse<Reconciliation>) => {
+          return response.data;
+        })
+        .catch((error: any) => {
+          throw new Error(`Error al insertar la conciliación: ${error.message}`);
+        });
+    }
 }

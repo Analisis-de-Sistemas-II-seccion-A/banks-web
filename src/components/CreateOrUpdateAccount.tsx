@@ -247,7 +247,8 @@ const CreateOrUpdateAccount = ({ theme }: any) => {
         CNT_TELEFONO: phoneNumber,
         CNT_CORREO: email,
         BNC_BANCO: selectedBank?.BNC_BANCO,
-        CNT_ESTADO: true
+        CNT_ESTADO: true,
+        CNT_SALDO: 0
       } as Account).then((data) => {
         navigate(`/accounts/${data.CNT_CUENTA}/detail`);
       });

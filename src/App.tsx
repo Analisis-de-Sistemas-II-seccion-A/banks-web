@@ -14,7 +14,6 @@ import AccountDetail from "./components/AccountDetail";
 import Transactions from "./components/Transactions";
 import ReportsDetail from "./components/ReportsDetail";
 import BankReconciliation from "./components/Reconciliation";
-import ReconciliationDetail from "./components/ReconciliationDetail";
 import CreateOrUpdateAccount from "./components/CreateOrUpdateAccount";
 import Transfer from "./components/Transfer";
 import ExecuteTransaction from "./components/ExecuteTransaction";
@@ -99,10 +98,6 @@ function App() {
               <Route
                 path={`/reconciliation`}
                 element={<BankReconciliation theme={theme} />}
-              />
-              <Route
-                path={`/reconciliation/detail`}
-                element={<ReconciliationDetail theme={theme} />}
               />
               <Route
                 path={`/accounts/:type`}
