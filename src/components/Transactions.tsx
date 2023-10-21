@@ -59,7 +59,7 @@ const Transactions = ({ theme }: any) => {
 
   useEffect(() => {
     if (selectedBank) {
-      BankService.getAccounts(selectedBank?.BNC_BANCO || 0).then(async (accounttins) => {
+      BankService.getAccounts(selectedBank?.BNC_BANCO!).then(async (accounttins) => {
         setAccounts(accounttins);
         await CatalogService.getCurrencies().then((currencies) => {
           setCurrencies(currencies);
@@ -123,7 +123,7 @@ const Transactions = ({ theme }: any) => {
     return {
       id: transaction.dbid,
       fecha: transaction.fecha,
-      monto: formatCurrency(transaction.monto_transaccion, accounts.find((account) => account.CNT_CUENTA === transaction.cuenta)?.MND_MONEDA || 0),
+      monto: formatCurrency(transaction.monto_transaccion, accounts.find((account) => account.CNT_CUENTA === transaction.cuenta)?.MND_MONEDA!),
       descripcion: transaction.descripcion,
       account: accounts.find((account) => account.CNT_CUENTA === transaction.cuenta)?.CNT_NOMBRE,
     };

@@ -69,7 +69,7 @@ function BankReconciliation({ theme }: any) {
   }, []);
 
   useEffect(() => {
-    dataService.getAccounts(selectedBank?.BNC_BANCO || 0).then((response) => {
+    dataService.getAccounts(selectedBank?.BNC_BANCO!).then((response) => {
       setAccounts(response);
     });
   }, [selectedBank]);
@@ -206,7 +206,7 @@ function BankReconciliation({ theme }: any) {
     }
 
     if (selectedAccount && value[0] && value[1]) {
-      await getTransactions(value[0].toISODate() || "", value[1].toISODate() || "", selectedAccount || 0);
+      await getTransactions(value[0].toISODate() || "", value[1].toISODate() || "", selectedAccount!);
     }
   };
 
@@ -231,7 +231,7 @@ function BankReconciliation({ theme }: any) {
       CON_INGRESOS_SISTEMA: systemCharge,
       CON_EGRESOS_SISTEMA: systemPayments,
       CON_DIFERENCIA: bankResult +- systemResult,
-      cnt_cuenta: selectedAccount || 0
+      cnt_cuenta: selectedAccount!
     })
     handleRedirect("reconciliation/detail");
   }

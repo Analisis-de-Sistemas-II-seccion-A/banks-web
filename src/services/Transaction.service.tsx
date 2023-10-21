@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { environment } from "../environments/environment";
 import { TransactionHistory } from "../interfaces/TransactionHistory.interface";
+import { Transaction } from "../interfaces/Transaction.interface";
 
 export default class TransactionService {
     static async getTransactionHistoryByDate(account: number, initDate: string, endDate: string): Promise<TransactionHistory[]> {
@@ -35,5 +36,16 @@ export default class TransactionService {
         .catch((error: any) => {
             throw new Error(`Error al obtener la lista de transacciones: ${error.message}`);
         });
+    }
+
+    static async insertTransaction(transaction: Transaction): Promise<Transaction> {
+        return await axios
+            .post<Transaction>(`${environment.apiUri}/transaction`, transaction)
+            .then((response: AxiosResponse<Transaction>) => {
+                return response.data;
+            })
+            .catch((error: any) => {
+                throw new Error(`Error al insertar la transacción: ${error.message}`);
+            });
     }
 }

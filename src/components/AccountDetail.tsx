@@ -395,7 +395,7 @@ const AccountDetail = ({ theme }: any) => {
                 value={value}
                 maxDate={DateTime.now()}
                 onAccept={async (newValue) => { setValue(newValue)
-                  await TransactionService.getTransactionHistoryByDate(selectedAccount?.CNT_CUENTA || 0,newValue[0]?.toISODate() || "", newValue[1]?.toISODate() || "").then((data) => {
+                  await TransactionService.getTransactionHistoryByDate(selectedAccount?.CNT_CUENTA!,newValue[0]?.toISODate() || "", newValue[1]?.toISODate() || "").then((data) => {
                     setTransactionHistory(data)
                   })}}
               />
