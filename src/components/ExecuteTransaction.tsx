@@ -176,14 +176,12 @@ const ExecuteTransaction = ({ theme }: any) => {
     } else {
       setMontoError(false);
     }
-    if (!hasError && monto && accounts.find((account) => account.CNT_CUENTA === numeroCuenta)?.CNT_SALDO) {
-      console.log(accounts.find((account) => account.CNT_CUENTA === numeroCuenta)?.CNT_SALDO)
-      console.log(monto)
-      console.log(accounts.find((account) => account.CNT_CUENTA === numeroCuenta)?.CNT_SALDO! < monto)
+
+    if (!hasError && monto) {
       if (type != "income"
         &&  (accounts.find((account) => account.CNT_CUENTA === numeroCuenta)?.CNT_SALDO! < monto)) {
-        setAlert(true);
-      } else {
+          setAlert(true);
+        } else {
         TransactionService.insertTransaction({
           TRA_NUMERO_DOCUMENTO: numeroDocumento!,
           TRA_DESCRIPCION: description,

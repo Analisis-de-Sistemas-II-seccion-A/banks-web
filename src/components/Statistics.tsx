@@ -91,22 +91,22 @@ function Statistics({ theme }: any) {
     navigate(`/${route}`);
   };
 
-  
-  
+
+
   const handleUpdateStatistics = async (accParam: number | null, bankParam: number | null, InitDateParam: string | null | undefined, endDateParam: string | null | undefined) => {
     await TransactionService.getTransactionHistorySearch(accParam, bankParam, InitDateParam, endDateParam).then(async (response) => {
       setTransactions(response);
-      if(response.length > 0) {
+      if (response.length > 0) {
         await handleGetAmmounts(response);
       }
     });
   }
 
-  const formatCurrency = (value :any) => {
+  const formatCurrency = (value: any) => {
     return new Intl.NumberFormat('es-GT', {
       style: 'currency',
       currency: 'GTQ',
-      minimumFractionDigits: 2, 
+      minimumFractionDigits: 2,
     }).format(value);
   };
 
@@ -114,7 +114,7 @@ function Statistics({ theme }: any) {
     let income = 0;
     let outcome = 0;
     let balance = 0;
-  
+
     transactions.forEach((transaction) => {
       if (transaction.tipo_operacion === 'SUMA') {
         if (transaction.moneda === 'USD') {
@@ -130,13 +130,13 @@ function Statistics({ theme }: any) {
         }
       }
     });
-  
+
     balance = income - outcome;
     setCurrentBalance(balance);
     setCurrentIncome(income);
     setCurrentOutcome(outcome);
   }
-  
+
 
   const handleSearchBanks = async () => {
     await BankService.getBanks().then((response) => {
@@ -151,7 +151,7 @@ function Statistics({ theme }: any) {
   }
 
   const handleChangeAmmount = (ammount: number, currency: string, factor: number) => {
-    if(currency === "USD") {
+    if (currency === "USD") {
       return ammount * factor;
     }
     return ammount;
@@ -317,7 +317,7 @@ function Statistics({ theme }: any) {
                   Monto de Ingresos
                 </Typography>
                 <Typography variant="h5" color="success">
-                 {formatCurrency(currentIncome)}
+                  {formatCurrency(currentIncome)}
                 </Typography>
               </CardContentWrapper>
             </StyledCard>
@@ -332,7 +332,7 @@ function Statistics({ theme }: any) {
                   Monto de Egresos
                 </Typography>
                 <Typography variant="h5" color="error">
-                 {formatCurrency(currentOutcome)}
+                  {formatCurrency(currentOutcome)}
                 </Typography>
               </CardContentWrapper>
             </StyledCard>
@@ -353,14 +353,13 @@ function Statistics({ theme }: any) {
             series={[
               {
                 label: "Ingresos por Día del Mes",
-                area: true,
+
                 data: transactions.map((transaction) => handleChangeAmmount(transaction.monto_transaccion, transaction.moneda, transaction.tasa_cambio)),
                 color: '#00fcce'
               },
             ]}
             width={isLargeScreen ? 500 : 400}
             height={400}
-
           />
           <PieChart
             sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
@@ -385,30 +384,36 @@ function Statistics({ theme }: any) {
             marginTop: "wrem",
           }}
         >
-          <BarChart
-            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
-            xAxis={[
-              { scaleType: "band", data: transactions.filter((tr) => tr.tipo_operacion === "RESTA").map((transaction) => transaction.descripcion) },
-            ]}
-            series={[{ data: transactions.filter((tr) => tr.tipo_operacion === "RESTA").map((transaction) =>handleChangeAmmount(transaction.monto_transaccion, transaction.moneda, transaction.tasa_cambio)),  label: "Gastos por categoría", color: "#e04c02"}]}
-            layout="vertical"
+          {transactions.filter((tr) => tr.tipo_operacion === "RESTA").length === 0 && (
+            <BarChart
+              sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
+              xAxis={[
+                { scaleType: "band", data: transactions.filter((tr) => tr.tipo_operacion === "RESTA").map((transaction) => transaction.origen) },
+              ]}
+              series={[{ data: transactions.filter((tr) => tr.tipo_operacion === "RESTA").map((transaction) => handleChangeAmmount(transaction.monto_transaccion, transaction.moneda, transaction.tasa_cambio)), label: "Gastos por categoría", color: "#e04c02" }]}
+              layout="vertical"
 
-            width={isLargeScreen ? 500 : 400}
-            height={400}
-          />
+              width={isLargeScreen ? 500 : 400}
+              height={400}
+            />
+          )
 
-        <BarChart
-            sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
-            xAxis={[
-              { scaleType: "band", data: transactions.filter((tr) => tr.tipo_operacion === "SUMA").map((transaction) => transaction.descripcion) },
-            ]}
-            series={[{ data: transactions.filter((tr) => tr.tipo_operacion === "SUMA").map((transaction) =>handleChangeAmmount(transaction.monto_transaccion, transaction.moneda, transaction.tasa_cambio)),  label: "Ingresos por categoría", color: "#000dfc"}]}
-            layout="vertical"
+          }
 
-            width={isLargeScreen ? 500 : 400}
-            height={400}
-          />
-         
+          {transactions.filter((tr) => tr.tipo_operacion === "SUMA") && (
+            <BarChart
+              sx={{ backgroundColor: isDarkMode ? "#1a1a1a" : "#F7F7F7" }}
+              xAxis={[
+                { scaleType: "band", data: transactions.filter((tr) => tr.tipo_operacion === "SUMA").map((transaction) => transaction.origen) },
+              ]}
+              series={[{ data: transactions.filter((tr) => tr.tipo_operacion === "SUMA").map((transaction) => handleChangeAmmount(transaction.monto_transaccion, transaction.moneda, transaction.tasa_cambio)), label: "Ingresos por categoría", color: "#000dfc" }]}
+              layout="vertical"
+
+              width={isLargeScreen ? 500 : 400}
+              height={400}
+            />
+          )
+          }
         </div>
       </Box>) : (
         <Box sx={{ marginBottom: '2rem' }}>
